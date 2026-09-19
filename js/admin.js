@@ -1,56 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
-       ELEMENTOS
-    ===================================================== */
-
-    const sidebar =
-        document.getElementById("adminSidebar");
-
-    const openSidebar =
-        document.getElementById("openSidebar");
-
-    const closeSidebar =
-        document.getElementById("closeSidebar");
-
-    const logoutButton =
-        document.getElementById("logoutButton");
-
-    const adminEmail =
-        document.getElementById("adminEmail");
-
-    const pageTitle =
-        document.getElementById("pageTitle");
-
-    const productModal =
-        document.getElementById("productModal");
-
-    const productModalOverlay =
-        document.getElementById("productModalOverlay");
-
-    const closeProductModal =
-        document.getElementById("closeProductModal");
-
-    const newProductButton =
-        document.getElementById("newProductButton");
-
-    const productForm =
-        document.getElementById("productForm");
-
-    const orderFilter =
-        document.getElementById("orderFilter");
-
-
-    let currentUser = null;
-
-    let allOrders = [];
-
-    let allProducts = [];
-
-    let allMessages = [];
-
-
-    /* =====================================================
        FIREBASE
     ===================================================== */
 
@@ -59,26 +9,72 @@ document.addEventListener("DOMContentLoaded", () => {
         !firebase.apps.length
     ) {
 
-        window.location.href =
-            "admin-login.html";
+        window.location.replace(
+            "admin-login.html"
+        );
 
         return;
-
     }
 
 
     const auth =
         firebase.auth();
 
-    const database =
+    const db =
         firebase.firestore();
+
+    const storage =
+        firebase.storage();
+
+
+    /* =====================================================
+       ESTADO
+    ===================================================== */
+
+    let allOrders = [];
+    let allProducts = [];
+    let allMessages = [];
+
+    let selectedImageFile = null;
+    let currentImageURL = "";
+    let currentStoragePath = "";
+
+
+    /* =====================================================
+       ELEMENTOS
+    ===================================================== */
+
+    const sidebar =
+        document.getElementById(
+            "adminSidebar"
+        );
+
+    const productModal =
+        document.getElementById(
+            "productModal"
+        );
+
+    const productForm =
+        document.getElementById(
+            "productForm"
+        );
+
+    const productImage =
+        document.getElementById(
+            "productImage"
+        );
+
+    const imagePreview =
+        document.getElementById(
+            "adminImagePreview"
+        );
 
 
     /* =====================================================
        AUTENTICAÇÃO
     ===================================================== */
 
-    auth.onAuthStateChanged(async user => {
+    auth.onAuthStateChanged(user => {
 
         if (!user) {
 
@@ -87,22 +83,24 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             return;
-
         }
 
 
-        currentUser = user;
+        const email =
+            document.getElementById(
+                "adminEmail"
+            );
 
 
-        if (adminEmail) {
+        if (email) {
 
-            adminEmail.textContent =
-                user.email || "Administrador";
-
+            email.textContent =
+                user.email ||
+                "Administrador";
         }
 
 
-        await startAdmin();
+        startAdmin();
 
     });
 
@@ -111,101 +109,82 @@ document.addEventListener("DOMContentLoaded", () => {
        LOGOUT
     ===================================================== */
 
-    if (logoutButton) {
-
-        logoutButton.addEventListener(
+    document
+        .getElementById("logoutButton")
+        ?.addEventListener(
             "click",
             async () => {
 
-                try {
+                await auth.signOut();
 
-                    await auth.signOut();
-
-                    window.location.replace(
-                        "admin-login.html"
-                    );
-
-                } catch (error) {
-
-                    console.error(error);
-
-                    showToast(
-                        "ERRO",
-                        "Não foi possível sair."
-                    );
-
-                }
+                window.location.replace(
+                    "admin-login.html"
+                );
 
             }
         );
-
-    }
 
 
     /* =====================================================
-       SIDEBAR
+       MENU MOBILE
     ===================================================== */
 
-    if (openSidebar) {
-
-        openSidebar.addEventListener(
+    document
+        .getElementById("openSidebar")
+        ?.addEventListener(
             "click",
             () => {
 
-                sidebar.classList.add(
+                sidebar?.classList.add(
                     "open"
                 );
 
             }
         );
 
-    }
 
-
-    if (closeSidebar) {
-
-        closeSidebar.addEventListener(
+    document
+        .getElementById("closeSidebar")
+        ?.addEventListener(
             "click",
             () => {
 
-                sidebar.classList.remove(
+                sidebar?.classList.remove(
                     "open"
                 );
 
             }
         );
-
-    }
 
 
     /* =====================================================
        NAVEGAÇÃO
     ===================================================== */
 
-    const navButtons =
-        document.querySelectorAll(
+    document
+        .querySelectorAll(
             ".admin-nav"
-        );
+        )
+        .forEach(button => {
 
+            button.addEventListener(
+                "click",
+                () => {
 
-    navButtons.forEach(button => {
+                    showSection(
+                        button.dataset.section
+                    );
 
-        button.addEventListener(
-            "click",
-            () => {
+                }
+            );
 
-                showSection(
-                    button.dataset.section
-                );
-
-            }
-        );
-
-    });
+        });
 
 
     document
-        .querySelectorAll("[data-go]")
+        .querySelectorAll(
+            "[data-go]"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -250,56 +229,63 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
 
-        const sectionElement =
-            document.getElementById(
+        document
+            .getElementById(
                 `${section}Section`
+            )
+            ?.classList.add(
+                "active"
             );
 
 
-        const navElement =
-            document.querySelector(
+        document
+            .querySelector(
                 `[data-section="${section}"]`
-            );
-
-
-        if (sectionElement) {
-
-            sectionElement.classList.add(
+            )
+            ?.classList.add(
                 "active"
             );
 
-        }
+
+        const titles = {
+
+            dashboard:
+                "DASHBOARD",
+
+            orders:
+                "PEDIDOS",
+
+            products:
+                "PRODUTOS",
+
+            stock:
+                "ESTOQUE",
+
+            messages:
+                "MENSAGENS",
+
+            clients:
+                "CLIENTES"
+
+        };
 
 
-        if (navElement) {
-
-            navElement.classList.add(
-                "active"
+        const title =
+            document.getElementById(
+                "pageTitle"
             );
 
-        }
 
+        if (title) {
 
-        if (pageTitle) {
-
-            const titles = {
-                dashboard: "DASHBOARD",
-                orders: "PEDIDOS",
-                products: "PRODUTOS",
-                stock: "ESTOQUE",
-                messages: "MENSAGENS",
-                clients: "CLIENTES"
-            };
-
-
-            pageTitle.textContent =
+            title.textContent =
                 titles[section] ||
                 "ADMIN";
 
         }
 
 
-        sidebar.classList.remove(
+        sidebar?.classList.remove(
             "open"
         );
 
@@ -307,216 +293,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       INICIAR
+       START
     ===================================================== */
 
-    async function startAdmin() {
+    function startAdmin() {
 
-        const firestoreStatus =
+        listenOrders();
+        listenProducts();
+        listenMessages();
+        startClock();
+
+
+        const status =
             document.getElementById(
                 "firestoreStatus"
             );
 
 
-        try {
+        if (status) {
 
-            await database
-                .collection("system")
-                .limit(1)
-                .get();
+            status.textContent =
+                "ONLINE";
 
-
-            if (firestoreStatus) {
-
-                firestoreStatus.textContent =
-                    "ONLINE";
-
-                firestoreStatus.classList.add(
-                    "online"
-                );
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Firestore:",
-                error
+            status.classList.add(
+                "online"
             );
-
-
-            if (firestoreStatus) {
-
-                firestoreStatus.textContent =
-                    "BLOCKED";
-
-            }
-
-        }
-
-
-        /*
-           Importa dados que foram criados
-           localmente durante os testes.
-        */
-
-        await importLocalData();
-
-
-        listenOrders();
-
-        listenProducts();
-
-        listenMessages();
-
-        startClock();
-
-    }
-
-
-    /* =====================================================
-       IMPORTAÇÃO LOCAL
-    ===================================================== */
-
-    async function importLocalData() {
-
-        /*
-           Essa função permite aproveitar
-           pedidos/mensagens criados antes
-           da integração com Firebase.
-
-           Depois que os dados forem
-           importados, eles são removidos
-           do armazenamento local.
-        */
-
-
-        const localOrders =
-            readLocalArray(
-                "metaVisionOrders"
-            );
-
-
-        for (const order of localOrders) {
-
-            try {
-
-                await database
-                    .collection("orders")
-                    .doc(order.id)
-                    .set(
-                        {
-                            ...order,
-
-                            imported:
-                                true,
-
-                            updatedAt:
-                                firebase.firestore
-                                    .FieldValue
-                                    .serverTimestamp()
-                        },
-                        {
-                            merge: true
-                        }
-                    );
-
-            } catch (error) {
-
-                console.error(
-                    "Erro importando pedido:",
-                    error
-                );
-
-                return;
-
-            }
-
-        }
-
-
-        if (localOrders.length) {
-
-            localStorage.removeItem(
-                "metaVisionOrders"
-            );
-
-        }
-
-
-        const localMessages =
-            readLocalArray(
-                "metaVisionMessages"
-            );
-
-
-        for (const message of localMessages) {
-
-            try {
-
-                await database
-                    .collection("messages")
-                    .doc(message.id)
-                    .set(
-                        {
-                            ...message,
-
-                            imported:
-                                true,
-
-                            read:
-                                false,
-
-                            updatedAt:
-                                firebase.firestore
-                                    .FieldValue
-                                    .serverTimestamp()
-                        },
-                        {
-                            merge: true
-                        }
-                    );
-
-            } catch (error) {
-
-                console.error(
-                    "Erro importando mensagem:",
-                    error
-                );
-
-                return;
-
-            }
-
-        }
-
-
-        if (localMessages.length) {
-
-            localStorage.removeItem(
-                "metaVisionMessages"
-            );
-
-        }
-
-    }
-
-
-    function readLocalArray(key) {
-
-        try {
-
-            return (
-                JSON.parse(
-                    localStorage.getItem(
-                        key
-                    )
-                ) || []
-            );
-
-        } catch (error) {
-
-            return [];
 
         }
 
@@ -529,45 +330,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function listenOrders() {
 
-        database
-            .collection("orders")
-            .onSnapshot(
-                snapshot => {
+        db.collection("orders")
+            .onSnapshot(snapshot => {
 
-                    allOrders =
-                        snapshot.docs.map(
-                            document => ({
-                                firestoreId:
-                                    document.id,
+                allOrders =
+                    snapshot.docs.map(
+                        document => ({
 
-                                ...document.data()
-                            })
-                        );
+                            firestoreId:
+                                document.id,
 
+                            ...document.data()
 
-                    allOrders.sort(
-                        (a, b) =>
-                            getTime(b.createdAt) -
-                            getTime(a.createdAt)
+                        })
                     );
 
 
-                    renderOrders();
+                allOrders.sort(
+                    (a, b) =>
+                        getTime(b.createdAt) -
+                        getTime(a.createdAt)
+                );
 
-                    updateDashboard();
 
-                    renderClients();
+                renderOrders();
+                renderClients();
+                updateDashboard();
 
-                },
-                error => {
-
-                    console.error(
-                        "Pedidos:",
-                        error
-                    );
-
-                }
-            );
+            });
 
     }
 
@@ -586,12 +376,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         const filter =
-            orderFilter
-                ? orderFilter.value
-                : "all";
+            document.getElementById(
+                "orderFilter"
+            )?.value || "all";
 
 
-        const filtered =
+        const orders =
             filter === "all"
                 ? allOrders
                 : allOrders.filter(
@@ -603,10 +393,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-        container.innerHTML = "";
-
-
-        if (!filtered.length) {
+        if (!orders.length) {
 
             container.innerHTML =
                 emptyState(
@@ -616,216 +403,171 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
             return;
-
         }
 
 
-        filtered.forEach(order => {
+        container.innerHTML =
+            orders.map(order => {
 
-            const item =
-                document.createElement(
-                    "article"
+                const customer =
+                    order.customer || {};
+
+
+                const products =
+                    Array.isArray(
+                        order.products
+                    )
+                        ? order.products
+                        : [];
+
+
+                const productText =
+                    products.map(product => {
+
+                        return `${escapeHTML(
+                            product.name ||
+                            "Produto"
+                        )} × ${Number(
+                            product.quantity || 1
+                        )}`;
+
+                    }).join(" • ");
+
+
+                return `
+
+                    <article class="admin-list-item">
+
+                        <div class="item-main">
+
+                            <span>
+                                ${escapeHTML(
+                                    order.id ||
+                                    order.firestoreId
+                                )}
+                            </span>
+
+                            <h3>
+                                ${escapeHTML(
+                                    customer.name ||
+                                    "Cliente"
+                                )}
+                            </h3>
+
+                            <p>
+                                ${productText}
+                            </p>
+
+                            <small>
+
+                                ${escapeHTML(
+                                    customer.email || ""
+                                )}
+
+                                ${customer.phone
+                                    ? " • " +
+                                      escapeHTML(
+                                          customer.phone
+                                      )
+                                    : ""
+                                }
+
+                            </small>
+
+                            <span class="status-pill">
+
+                                ${statusLabel(
+                                    order.status ||
+                                    "pending"
+                                )}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="item-actions">
+
+                            <button
+                                data-order="${order.firestoreId}"
+                                data-status="confirmed"
+                            >
+                                CONFIRMAR
+                            </button>
+
+                            <button
+                                data-order="${order.firestoreId}"
+                                data-status="completed"
+                            >
+                                CONCLUIR
+                            </button>
+
+                            <button
+                                class="danger"
+                                data-order="${order.firestoreId}"
+                                data-status="cancelled"
+                            >
+                                CANCELAR
+                            </button>
+
+                        </div>
+
+                    </article>
+
+                `;
+
+            }).join("");
+
+
+        container
+            .querySelectorAll(
+                "[data-order][data-status]"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    async () => {
+
+                        await db
+                            .collection("orders")
+                            .doc(
+                                button.dataset.order
+                            )
+                            .update({
+
+                                status:
+                                    button.dataset.status,
+
+                                updatedAt:
+                                    firebase.firestore
+                                        .FieldValue
+                                        .serverTimestamp()
+
+                            });
+
+
+                        showToast(
+                            "PEDIDO ATUALIZADO",
+                            statusLabel(
+                                button.dataset.status
+                            )
+                        );
+
+                    }
                 );
 
-
-            item.className =
-                "admin-list-item";
-
-
-            const customer =
-                order.customer || {};
-
-
-            const products =
-                Array.isArray(
-                    order.products
-                )
-                    ? order.products
-                    : [];
-
-
-            const quantity =
-                products.reduce(
-                    (total, product) =>
-                        total +
-                        Number(
-                            product.quantity ||
-                            1
-                        ),
-                    0
-                );
-
-
-            const status =
-                order.status ||
-                "pending";
-
-
-            item.innerHTML = `
-
-                <div class="item-main">
-
-                    <span>
-                        ${escapeHTML(
-                            order.id ||
-                            order.firestoreId
-                        )}
-                    </span>
-
-                    <h3>
-                        ${escapeHTML(
-                            customer.name ||
-                            "Cliente"
-                        )}
-                    </h3>
-
-                    <p>
-                        ${quantity}
-                        produto(s) •
-                        ${escapeHTML(
-                            customer.city ||
-                            "Cidade não informada"
-                        )}
-                    </p>
-
-                    <small>
-                        ${escapeHTML(
-                            customer.email ||
-                            ""
-                        )}
-
-                        ${customer.phone
-                            ? " • " +
-                              escapeHTML(
-                                  customer.phone
-                              )
-                            : ""
-                        }
-                    </small>
-
-                    <span class="
-                        status-pill
-                        ${status === "cancelled"
-                            ? "cancelled"
-                            : ""
-                        }
-                    ">
-                        ${statusLabel(status)}
-                    </span>
-
-                </div>
-
-
-                <div class="item-actions">
-
-                    <button
-                        type="button"
-                        data-order-status="confirmed"
-                    >
-                        CONFIRMAR
-                    </button>
-
-                    <button
-                        type="button"
-                        data-order-status="completed"
-                    >
-                        CONCLUIR
-                    </button>
-
-                    <button
-                        type="button"
-                        class="danger"
-                        data-order-status="cancelled"
-                    >
-                        CANCELAR
-                    </button>
-
-                </div>
-
-            `;
-
-
-            item
-                .querySelectorAll(
-                    "[data-order-status]"
-                )
-                .forEach(button => {
-
-                    button.addEventListener(
-                        "click",
-                        () => {
-
-                            updateOrderStatus(
-                                order.firestoreId,
-                                button.dataset
-                                    .orderStatus
-                            );
-
-                        }
-                    );
-
-                });
-
-
-            container.appendChild(
-                item
-            );
-
-        });
+            });
 
     }
 
 
-    async function updateOrderStatus(
-        id,
-        status
-    ) {
-
-        try {
-
-            await database
-                .collection("orders")
-                .doc(id)
-                .update({
-
-                    status:
-                        status,
-
-                    updatedAt:
-                        firebase.firestore
-                            .FieldValue
-                            .serverTimestamp()
-
-                });
-
-
-            showToast(
-                "PEDIDO ATUALIZADO",
-                statusLabel(status)
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-            showToast(
-                "ERRO",
-                "Não foi possível atualizar."
-            );
-
-        }
-
-    }
-
-
-    if (orderFilter) {
-
-        orderFilter.addEventListener(
+    document
+        .getElementById("orderFilter")
+        ?.addEventListener(
             "change",
             renderOrders
         );
-
-    }
 
 
     /* =====================================================
@@ -834,38 +576,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function listenProducts() {
 
-        database
-            .collection("products")
-            .onSnapshot(
-                snapshot => {
+        db.collection("products")
+            .onSnapshot(snapshot => {
 
-                    allProducts =
-                        snapshot.docs.map(
-                            document => ({
-                                firestoreId:
-                                    document.id,
+                allProducts =
+                    snapshot.docs.map(
+                        document => ({
 
-                                ...document.data()
-                            })
-                        );
+                            firestoreId:
+                                document.id,
 
+                            ...document.data()
 
-                    renderProducts();
-
-                    renderStock();
-
-                    updateDashboard();
-
-                },
-                error => {
-
-                    console.error(
-                        "Produtos:",
-                        error
+                        })
                     );
 
-                }
-            );
+
+                renderProducts();
+                renderStock();
+                updateDashboard();
+
+            });
 
     }
 
@@ -883,148 +614,207 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        container.innerHTML = "";
-
-
         if (!allProducts.length) {
 
             container.innerHTML =
                 emptyState(
                     "fa-glasses",
                     "CATÁLOGO VAZIO",
-                    "Cadastre o primeiro produto."
+                    "Cadastre seu primeiro produto."
                 );
 
             return;
-
         }
 
 
-        allProducts.forEach(product => {
+        container.innerHTML =
+            allProducts.map(product => `
 
-            const item =
-                document.createElement(
-                    "article"
-                );
+                <article class="admin-list-item">
 
+                    <div class="item-main">
 
-            item.className =
-                "admin-list-item";
+                        <span>
+                            ${escapeHTML(
+                                product.family ||
+                                "META VISION"
+                            )}
+                        </span>
 
+                        <h3>
+                            ${escapeHTML(
+                                product.name ||
+                                "Produto"
+                            )}
+                        </h3>
 
-            item.innerHTML = `
+                        <p>
+                            ${escapeHTML(
+                                product.variant ||
+                                ""
+                            )}
+                        </p>
 
-                <div class="item-main">
+                        <small>
 
-                    <span>
-                        ${escapeHTML(
-                            product.family ||
-                            "META VISION"
-                        )}
-                    </span>
+                            ESTOQUE:
+                            ${Number(
+                                product.stock || 0
+                            )}
 
-                    <h3>
-                        ${escapeHTML(
-                            product.name ||
-                            "Produto"
-                        )}
-                    </h3>
+                            •
 
-                    <p>
-                        ${escapeHTML(
-                            product.variant ||
-                            ""
-                        )}
-                    </p>
+                            ${escapeHTML(
+                                product.price ||
+                                "Sob consulta"
+                            )}
 
-                    <small>
-                        ESTOQUE:
-                        ${Number(
-                            product.stock ||
-                            0
-                        )}
-                        •
-                        ${escapeHTML(
-                            product.price ||
-                            "Sob consulta"
-                        )}
-                    </small>
+                        </small>
 
-                </div>
+                        ${product.imageURL
+                            ? `
+                                <div class="
+                                    product-admin-thumbnail
+                                ">
+                                    <img
+                                        src="${escapeHTML(
+                                            product.imageURL
+                                        )}"
+                                        alt=""
+                                    >
+                                </div>
+                              `
+                            : ""
+                        }
 
-
-                <div class="item-actions">
-
-                    <button
-                        type="button"
-                        data-edit-product
-                    >
-                        EDITAR
-                    </button>
-
-                    <button
-                        type="button"
-                        class="danger"
-                        data-delete-product
-                    >
-                        EXCLUIR
-                    </button>
-
-                </div>
-
-            `;
+                    </div>
 
 
-            item
-                .querySelector(
-                    "[data-edit-product]"
-                )
-                .addEventListener(
+                    <div class="item-actions">
+
+                        <button
+                            data-edit-product="
+                                ${product.firestoreId}
+                            "
+                        >
+                            EDITAR
+                        </button>
+
+                        <button
+                            class="danger"
+                            data-delete-product="
+                                ${product.firestoreId}
+                            "
+                        >
+                            EXCLUIR
+                        </button>
+
+                    </div>
+
+                </article>
+
+            `).join("");
+
+
+        container
+            .querySelectorAll(
+                "[data-edit-product]"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
                     "click",
                     () => {
 
-                        openProductEditor(
-                            product
-                        );
+                        const product =
+                            allProducts.find(
+                                item =>
+                                    item.firestoreId ===
+                                    button.dataset
+                                        .editProduct
+                            );
+
+
+                        if (product) {
+
+                            openProductModal(
+                                product
+                            );
+
+                        }
 
                     }
                 );
 
+            });
 
-            item
-                .querySelector(
-                    "[data-delete-product]"
-                )
-                .addEventListener(
+
+        container
+            .querySelectorAll(
+                "[data-delete-product]"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
                     "click",
                     () => {
 
                         deleteProduct(
-                            product.firestoreId
+                            button.dataset
+                                .deleteProduct
                         );
 
                     }
                 );
 
-
-            container.appendChild(
-                item
-            );
-
-        });
+            });
 
     }
 
 
     /* =====================================================
-       MODAL PRODUTO
+       MODAL
     ===================================================== */
 
-    function openProductEditor(
+    document
+        .getElementById(
+            "newProductButton"
+        )
+        ?.addEventListener(
+            "click",
+            () => openProductModal()
+        );
+
+
+    document
+        .getElementById(
+            "closeProductModal"
+        )
+        ?.addEventListener(
+            "click",
+            closeProductModal
+        );
+
+
+    document
+        .getElementById(
+            "productModalOverlay"
+        )
+        ?.addEventListener(
+            "click",
+            closeProductModal
+        );
+
+
+    function openProductModal(
         product = null
     ) {
 
         productForm.reset();
+
+        selectedImageFile = null;
+        currentImageURL = "";
+        currentStoragePath = "";
 
 
         document.getElementById(
@@ -1083,6 +873,37 @@ document.addEventListener("DOMContentLoaded", () => {
             ).value =
                 product.description || "";
 
+
+            currentImageURL =
+                product.imageURL || "";
+
+
+            currentStoragePath =
+                product.storagePath || "";
+
+
+            if (
+                currentImageURL &&
+                imagePreview
+            ) {
+
+                imagePreview.innerHTML = `
+
+                    <img
+                        src="${escapeHTML(
+                            currentImageURL
+                        )}"
+                        alt="Imagem atual"
+                    >
+
+                `;
+
+            }
+
+        } else {
+
+            resetImagePreview();
+
         }
 
 
@@ -1097,7 +918,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function closeProductEditor() {
+    function closeProductModal() {
 
         productModal.classList.remove(
             "active"
@@ -1110,86 +931,271 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    if (newProductButton) {
+    /* =====================================================
+       PREVIEW
+    ===================================================== */
 
-        newProductButton.addEventListener(
-            "click",
-            () =>
-                openProductEditor()
-        );
+    productImage?.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                productImage.files?.[0];
+
+
+            if (!file) {
+
+                selectedImageFile = null;
+
+                return;
+            }
+
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                alert(
+                    "Selecione uma imagem."
+                );
+
+                productImage.value = "";
+
+                return;
+            }
+
+
+            if (
+                file.size >
+                5 * 1024 * 1024
+            ) {
+
+                alert(
+                    "A imagem deve ter no máximo 5 MB."
+                );
+
+                productImage.value = "";
+
+                return;
+            }
+
+
+            selectedImageFile =
+                file;
+
+
+            const url =
+                URL.createObjectURL(file);
+
+
+            imagePreview.innerHTML = `
+
+                <img
+                    src="${url}"
+                    alt="Prévia"
+                >
+
+            `;
+
+        }
+    );
+
+
+    function resetImagePreview() {
+
+        if (!imagePreview) {
+            return;
+        }
+
+
+        imagePreview.innerHTML = `
+
+            <span>
+                NENHUMA IMAGEM SELECIONADA
+            </span>
+
+        `;
 
     }
 
 
-    if (closeProductModal) {
+    /* =====================================================
+       UPLOAD
+    ===================================================== */
 
-        closeProductModal.addEventListener(
-            "click",
-            closeProductEditor
+    async function uploadProductImage() {
+
+        if (!selectedImageFile) {
+
+            return {
+                imageURL:
+                    currentImageURL,
+
+                storagePath:
+                    currentStoragePath
+            };
+
+        }
+
+
+        const extension =
+            selectedImageFile.name
+                .split(".")
+                .pop()
+                .toLowerCase()
+                .replace(
+                    /[^a-z0-9]/g,
+                    ""
+                ) || "jpg";
+
+
+        const path =
+            `products/${Date.now()}-${Math.random()
+                .toString(36)
+                .slice(2)}.${extension}`;
+
+
+        const reference =
+            storage.ref(path);
+
+
+        await reference.put(
+            selectedImageFile,
+            {
+                contentType:
+                    selectedImageFile.type
+            }
         );
+
+
+        const imageURL =
+            await reference
+                .getDownloadURL();
+
+
+        return {
+
+            imageURL:
+                imageURL,
+
+            storagePath:
+                path
+
+        };
 
     }
 
 
-    if (productModalOverlay) {
+    /* =====================================================
+       SALVAR PRODUTO
+    ===================================================== */
 
-        productModalOverlay.addEventListener(
-            "click",
-            closeProductEditor
-        );
+    productForm?.addEventListener(
+        "submit",
+        async event => {
 
-    }
-
-
-    if (productForm) {
-
-        productForm.addEventListener(
-            "submit",
-            async event => {
-
-                event.preventDefault();
+            event.preventDefault();
 
 
-                const editingId =
-                    document.getElementById(
-                        "editingProductId"
-                    ).value;
+            const editingId =
+                document.getElementById(
+                    "editingProductId"
+                ).value;
 
 
-                const productData = {
+            const saveButton =
+                productForm.querySelector(
+                    ".save-product-button"
+                );
+
+
+            saveButton.disabled =
+                true;
+
+
+            const original =
+                saveButton.querySelector(
+                    "span"
+                ).textContent;
+
+
+            saveButton.querySelector(
+                "span"
+            ).textContent =
+                selectedImageFile
+                    ? "ENVIANDO IMAGEM..."
+                    : "SALVANDO...";
+
+
+            try {
+
+                const uploaded =
+                    await uploadProductImage();
+
+
+                const data = {
 
                     name:
-                        document.getElementById(
-                            "productName"
-                        ).value.trim(),
+                        document
+                            .getElementById(
+                                "productName"
+                            )
+                            .value
+                            .trim(),
 
                     family:
-                        document.getElementById(
-                            "productFamily"
-                        ).value,
+                        document
+                            .getElementById(
+                                "productFamily"
+                            )
+                            .value,
 
                     variant:
-                        document.getElementById(
-                            "productVariant"
-                        ).value.trim(),
+                        document
+                            .getElementById(
+                                "productVariant"
+                            )
+                            .value
+                            .trim(),
 
                     stock:
-                        Number(
-                            document.getElementById(
-                                "productStock"
-                            ).value
+                        Math.max(
+                            0,
+                            Number(
+                                document
+                                    .getElementById(
+                                        "productStock"
+                                    )
+                                    .value
+                            )
                         ),
 
                     price:
-                        document.getElementById(
-                            "productPrice"
-                        ).value.trim()
+                        document
+                            .getElementById(
+                                "productPrice"
+                            )
+                            .value
+                            .trim()
                         || "Sob consulta",
 
                     description:
-                        document.getElementById(
-                            "productDescription"
-                        ).value.trim(),
+                        document
+                            .getElementById(
+                                "productDescription"
+                            )
+                            .value
+                            .trim(),
+
+                    imageURL:
+                        uploaded.imageURL ||
+                        "",
+
+                    storagePath:
+                        uploaded.storagePath ||
+                        "",
 
                     active:
                         true,
@@ -1202,75 +1208,117 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
 
 
-                try {
+                if (editingId) {
 
-                    if (editingId) {
+                    await db
+                        .collection("products")
+                        .doc(editingId)
+                        .update(data);
 
-                        await database
-                            .collection("products")
-                            .doc(editingId)
-                            .update(
-                                productData
-                            );
+                } else {
 
-                    } else {
-
-                        productData.createdAt =
-                            firebase.firestore
-                                .FieldValue
-                                .serverTimestamp();
+                    data.createdAt =
+                        firebase.firestore
+                            .FieldValue
+                            .serverTimestamp();
 
 
-                        await database
-                            .collection("products")
-                            .add(
-                                productData
-                            );
-
-                    }
-
-
-                    closeProductEditor();
-
-
-                    showToast(
-                        "PRODUTO SALVO",
-                        productData.name
-                    );
-
-                } catch (error) {
-
-                    console.error(error);
-
-                    showToast(
-                        "ERRO",
-                        "Não foi possível salvar."
-                    );
+                    await db
+                        .collection("products")
+                        .add(data);
 
                 }
 
+
+                closeProductModal();
+
+
+                showToast(
+                    "PRODUTO SALVO",
+                    data.name
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                alert(
+                    "Não foi possível salvar o produto. Verifique o Firebase Storage e as regras."
+                );
+
+
+            } finally {
+
+                saveButton.disabled =
+                    false;
+
+
+                saveButton.querySelector(
+                    "span"
+                ).textContent =
+                    original;
+
             }
-        );
 
-    }
+        }
+    );
 
+
+    /* =====================================================
+       EXCLUIR PRODUTO
+    ===================================================== */
 
     async function deleteProduct(id) {
 
-        const confirmed =
-            window.confirm(
-                "Deseja excluir este produto?"
+        const product =
+            allProducts.find(
+                item =>
+                    item.firestoreId === id
             );
 
 
-        if (!confirmed) {
+        if (!product) {
+            return;
+        }
+
+
+        if (
+            !confirm(
+                `Excluir "${product.name}"?`
+            )
+        ) {
+
             return;
         }
 
 
         try {
 
-            await database
+            if (product.storagePath) {
+
+                try {
+
+                    await storage
+                        .ref(
+                            product.storagePath
+                        )
+                        .delete();
+
+                } catch (storageError) {
+
+                    console.warn(
+                        "Imagem não removida:",
+                        storageError
+                    );
+
+                }
+
+            }
+
+
+            await db
                 .collection("products")
                 .doc(id)
                 .delete();
@@ -1278,15 +1326,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             showToast(
                 "PRODUTO EXCLUÍDO",
-                "Catálogo atualizado."
+                product.name
             );
+
 
         } catch (error) {
 
             console.error(error);
 
-            showToast(
-                "ERRO",
+            alert(
                 "Não foi possível excluir."
             );
 
@@ -1312,9 +1360,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        container.innerHTML = "";
-
-
         if (!allProducts.length) {
 
             container.innerHTML =
@@ -1325,57 +1370,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
             return;
-
         }
 
 
-        allProducts.forEach(product => {
+        container.innerHTML =
+            allProducts.map(product => `
 
-            const card =
-                document.createElement(
-                    "article"
-                );
+                <article class="stock-card">
 
+                    <span>
+                        ${escapeHTML(
+                            product.family ||
+                            "PRODUCT"
+                        )}
+                    </span>
 
-            card.className =
-                "stock-card";
+                    <h3>
+                        ${escapeHTML(
+                            product.name
+                        )}
+                    </h3>
 
+                    <strong class="stock-number">
 
-            card.innerHTML = `
+                        ${Number(
+                            product.stock || 0
+                        )}
 
-                <span>
-                    ${escapeHTML(
-                        product.family ||
-                        "PRODUCT"
-                    )}
-                </span>
+                    </strong>
 
-                <h3>
-                    ${escapeHTML(
-                        product.name ||
-                        "Produto"
-                    )}
-                </h3>
+                    <small>
+                        UNIDADES DISPONÍVEIS
+                    </small>
 
-                <strong class="stock-number">
-                    ${Number(
-                        product.stock ||
-                        0
-                    )}
-                </strong>
+                </article>
 
-                <small>
-                    UNIDADES DISPONÍVEIS
-                </small>
-
-            `;
-
-
-            container.appendChild(
-                card
-            );
-
-        });
+            `).join("");
 
     }
 
@@ -1386,43 +1416,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function listenMessages() {
 
-        database
-            .collection("messages")
-            .onSnapshot(
-                snapshot => {
+        db.collection("messages")
+            .onSnapshot(snapshot => {
 
-                    allMessages =
-                        snapshot.docs.map(
-                            document => ({
-                                firestoreId:
-                                    document.id,
+                allMessages =
+                    snapshot.docs.map(
+                        document => ({
 
-                                ...document.data()
-                            })
-                        );
+                            firestoreId:
+                                document.id,
 
+                            ...document.data()
 
-                    allMessages.sort(
-                        (a, b) =>
-                            getTime(b.createdAt) -
-                            getTime(a.createdAt)
+                        })
                     );
 
 
-                    renderMessages();
+                allMessages.sort(
+                    (a, b) =>
+                        getTime(b.createdAt) -
+                        getTime(a.createdAt)
+                );
 
-                    updateDashboard();
 
-                },
-                error => {
+                renderMessages();
+                updateDashboard();
 
-                    console.error(
-                        "Mensagens:",
-                        error
-                    );
-
-                }
-            );
+            });
 
     }
 
@@ -1440,193 +1460,146 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        container.innerHTML = "";
-
-
         if (!allMessages.length) {
 
             container.innerHTML =
                 emptyState(
                     "fa-message",
                     "SEM MENSAGENS",
-                    "Novos contatos aparecerão aqui."
+                    "Os contatos aparecerão aqui."
                 );
 
             return;
-
         }
 
 
-        allMessages.forEach(message => {
+        container.innerHTML =
+            allMessages.map(message => `
 
-            const item =
-                document.createElement(
-                    "article"
-                );
+                <article class="admin-list-item">
 
+                    <div class="item-main">
 
-            item.className =
-                "admin-list-item";
+                        <span>
+                            ${escapeHTML(
+                                message.subject ||
+                                "CONTATO"
+                            )}
+                        </span>
 
+                        <h3>
+                            ${escapeHTML(
+                                message.name ||
+                                "Cliente"
+                            )}
+                        </h3>
 
-            item.innerHTML = `
+                        <p>
+                            ${escapeHTML(
+                                message.message ||
+                                ""
+                            )}
+                        </p>
 
-                <div class="item-main">
+                        <small>
 
-                    <span>
-                        ${escapeHTML(
-                            message.subject ||
-                            "CONTATO"
-                        )}
-                    </span>
+                            ${escapeHTML(
+                                message.email || ""
+                            )}
 
-                    <h3>
-                        ${escapeHTML(
-                            message.name ||
-                            "Cliente"
-                        )}
-                    </h3>
+                            •
 
-                    <p>
-                        ${escapeHTML(
-                            message.message ||
-                            ""
-                        )}
-                    </p>
+                            ${escapeHTML(
+                                message.phone || ""
+                            )}
 
-                    <small>
-                        ${escapeHTML(
-                            message.email ||
-                            ""
-                        )}
+                        </small>
 
-                        ${message.phone
-                            ? " • " +
-                              escapeHTML(
-                                  message.phone
-                              )
-                            : ""
-                        }
-                    </small>
-
-                </div>
+                    </div>
 
 
-                <div class="item-actions">
+                    <div class="item-actions">
 
-                    <button
-                        type="button"
-                        data-read-message
-                    >
-                        MARCAR LIDA
-                    </button>
+                        <button
+                            data-read="
+                                ${message.firestoreId}
+                            "
+                        >
+                            MARCAR LIDA
+                        </button>
 
-                    <button
-                        type="button"
-                        class="danger"
-                        data-delete-message
-                    >
-                        EXCLUIR
-                    </button>
+                        <button
+                            class="danger"
+                            data-delete-message="
+                                ${message.firestoreId}
+                            "
+                        >
+                            EXCLUIR
+                        </button>
 
-                </div>
+                    </div>
 
-            `;
+                </article>
+
+            `).join("");
 
 
-            item
-                .querySelector(
-                    "[data-read-message]"
-                )
-                .addEventListener(
+        container
+            .querySelectorAll(
+                "[data-read]"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
                     "click",
                     async () => {
 
-                        try {
+                        await db
+                            .collection("messages")
+                            .doc(
+                                button.dataset.read
+                            )
+                            .update({
+                                read: true
+                            });
 
-                            await database
-                                .collection(
-                                    "messages"
-                                )
-                                .doc(
-                                    message.firestoreId
-                                )
-                                .update({
-                                    read: true
-                                });
+                    }
+                );
+
+            });
 
 
-                            showToast(
-                                "MENSAGEM",
-                                "Marcada como lida."
-                            );
+        container
+            .querySelectorAll(
+                "[data-delete-message]"
+            )
+            .forEach(button => {
 
-                        } catch (error) {
+                button.addEventListener(
+                    "click",
+                    async () => {
 
-                            console.error(error);
-
+                        if (
+                            !confirm(
+                                "Excluir mensagem?"
+                            )
+                        ) {
+                            return;
                         }
 
-                    }
-                );
 
-
-            item
-                .querySelector(
-                    "[data-delete-message]"
-                )
-                .addEventListener(
-                    "click",
-                    () => {
-
-                        deleteMessage(
-                            message.firestoreId
-                        );
+                        await db
+                            .collection("messages")
+                            .doc(
+                                button.dataset
+                                    .deleteMessage
+                            )
+                            .delete();
 
                     }
                 );
 
-
-            container.appendChild(
-                item
-            );
-
-        });
-
-    }
-
-
-    async function deleteMessage(id) {
-
-        const confirmed =
-            window.confirm(
-                "Excluir esta mensagem?"
-            );
-
-
-        if (!confirmed) {
-            return;
-        }
-
-
-        try {
-
-            await database
-                .collection("messages")
-                .doc(id)
-                .delete();
-
-
-            showToast(
-                "MENSAGEM EXCLUÍDA",
-                "Caixa de entrada atualizada."
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-        }
+            });
 
     }
 
@@ -1648,7 +1621,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        const clients = new Map();
+        const clients =
+            new Map();
 
 
         allOrders.forEach(order => {
@@ -1664,8 +1638,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     customer.name ||
                     ""
                 )
-                    .toLowerCase()
-                    .trim();
+                    .trim()
+                    .toLowerCase();
 
 
             if (!key) {
@@ -1686,12 +1660,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            clients.get(key).orders += 1;
+            clients.get(key).orders++;
 
         });
-
-
-        container.innerHTML = "";
 
 
         if (!clients.size) {
@@ -1700,65 +1671,58 @@ document.addEventListener("DOMContentLoaded", () => {
                 emptyState(
                     "fa-user",
                     "SEM CLIENTES",
-                    "Clientes aparecerão após os pedidos."
+                    "Os clientes aparecerão após os pedidos."
                 );
 
             return;
-
         }
 
 
-        clients.forEach(client => {
+        container.innerHTML =
+            Array.from(
+                clients.values()
+            )
+            .map(client => `
 
-            const card =
-                document.createElement(
-                    "article"
-                );
+                <article class="client-card">
 
+                    <span>
+                        CLIENT // PROFILE
+                    </span>
 
-            card.className =
-                "client-card";
+                    <h3>
+                        ${escapeHTML(
+                            client.name ||
+                            "Cliente"
+                        )}
+                    </h3>
 
+                    <p>
 
-            card.innerHTML = `
+                        ${escapeHTML(
+                            client.email ||
+                            "Sem e-mail"
+                        )}
 
-                <span>
-                    CLIENT // PROFILE
-                </span>
+                        <br>
 
-                <h3>
-                    ${escapeHTML(
-                        client.name ||
-                        "Cliente"
-                    )}
-                </h3>
+                        ${escapeHTML(
+                            client.phone ||
+                            "Sem telefone"
+                        )}
 
-                <p>
-                    ${escapeHTML(
-                        client.email ||
-                        "Sem e-mail"
-                    )}
-                    <br>
+                    </p>
 
-                    ${escapeHTML(
-                        client.phone ||
-                        "Sem telefone"
-                    )}
-                </p>
+                    <small>
 
-                <small>
-                    ${client.orders}
-                    PEDIDO(S)
-                </small>
+                        ${client.orders}
+                        PEDIDO(S)
 
-            `;
+                    </small>
 
+                </article>
 
-            container.appendChild(
-                card
-            );
-
-        });
+            `).join("");
 
     }
 
@@ -1776,6 +1740,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         order.status ||
                         "pending"
                     ) === "pending"
+            ).length;
+
+
+        const unread =
+            allMessages.filter(
+                message =>
+                    !message.read
             ).length;
 
 
@@ -1799,19 +1770,10 @@ document.addEventListener("DOMContentLoaded", () => {
             allMessages.length
         );
 
-
         setText(
             "ordersBadge",
             pending
         );
-
-
-        const unread =
-            allMessages.filter(
-                message =>
-                    !message.read
-            ).length;
-
 
         setText(
             "messagesBadge",
@@ -1837,9 +1799,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        container.innerHTML = "";
-
-
         const latest =
             allOrders.slice(0, 5);
 
@@ -1854,67 +1813,50 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
             return;
-
         }
 
 
-        latest.forEach(order => {
+        container.innerHTML =
+            latest.map(order => `
 
-            const customer =
-                order.customer || {};
+                <div class="latest-item">
 
+                    <div>
 
-            const div =
-                document.createElement(
-                    "div"
-                );
+                        <strong>
+                            ${escapeHTML(
+                                order.customer?.name ||
+                                "Cliente"
+                            )}
+                        </strong>
 
+                        <span>
+                            ${escapeHTML(
+                                order.id ||
+                                order.firestoreId
+                            )}
+                        </span>
 
-            div.className =
-                "latest-item";
+                    </div>
 
+                    <span class="status-pill">
 
-            div.innerHTML = `
-
-                <div>
-
-                    <strong>
-                        ${escapeHTML(
-                            customer.name ||
-                            "Cliente"
+                        ${statusLabel(
+                            order.status ||
+                            "pending"
                         )}
-                    </strong>
 
-                    <span>
-                        ${escapeHTML(
-                            order.id ||
-                            order.firestoreId
-                        )}
                     </span>
 
                 </div>
 
-                <span class="status-pill">
-                    ${statusLabel(
-                        order.status ||
-                        "pending"
-                    )}
-                </span>
-
-            `;
-
-
-            container.appendChild(
-                div
-            );
-
-        });
+            `).join("");
 
     }
 
 
     /* =====================================================
-       RELÓGIO
+       CLOCK
     ===================================================== */
 
     function startClock() {
@@ -1925,7 +1867,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        function update() {
+        const update = () => {
 
             if (!clock) {
                 return;
@@ -1945,7 +1887,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     );
 
-        }
+        };
 
 
         update();
@@ -1961,47 +1903,6 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =====================================================
        HELPERS
     ===================================================== */
-
-    function statusLabel(status) {
-
-        const labels = {
-            pending:
-                "PENDENTE",
-
-            confirmed:
-                "CONFIRMADO",
-
-            completed:
-                "CONCLUÍDO",
-
-            cancelled:
-                "CANCELADO"
-        };
-
-
-        return (
-            labels[status] ||
-            String(status).toUpperCase()
-        );
-
-    }
-
-
-    function setText(id, value) {
-
-        const element =
-            document.getElementById(id);
-
-
-        if (element) {
-
-            element.textContent =
-                value;
-
-        }
-
-    }
-
 
     function getTime(value) {
 
@@ -2035,31 +1936,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    function statusLabel(status) {
+
+        return {
+
+            pending:
+                "PENDENTE",
+
+            confirmed:
+                "CONFIRMADO",
+
+            completed:
+                "CONCLUÍDO",
+
+            cancelled:
+                "CANCELADO"
+
+        }[status] ||
+        String(status).toUpperCase();
+
+    }
+
+
     function escapeHTML(value) {
 
-        return String(
-            value ?? ""
-        )
-            .replaceAll(
-                "&",
-                "&amp;"
-            )
-            .replaceAll(
-                "<",
-                "&lt;"
-            )
-            .replaceAll(
-                ">",
-                "&gt;"
-            )
-            .replaceAll(
-                '"',
-                "&quot;"
-            )
-            .replaceAll(
-                "'",
-                "&#039;"
-            );
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+
+    }
+
+
+    function setText(id, value) {
+
+        const element =
+            document.getElementById(id);
+
+
+        if (element) {
+
+            element.textContent =
+                value;
+
+        }
 
     }
 
@@ -2067,7 +1989,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function emptyState(
         icon,
         title,
-        text
+        message
     ) {
 
         return `
@@ -2084,7 +2006,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </strong>
 
                 <span>
-                    ${escapeHTML(text)}
+                    ${escapeHTML(message)}
                 </span>
 
             </div>
@@ -2099,17 +2021,6 @@ document.addEventListener("DOMContentLoaded", () => {
         message
     ) {
 
-        const toast =
-            document.getElementById(
-                "adminToast"
-            );
-
-
-        if (!toast) {
-            return;
-        }
-
-
         setText(
             "toastTitle",
             title
@@ -2121,7 +2032,13 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        toast.classList.add(
+        const toast =
+            document.getElementById(
+                "adminToast"
+            );
+
+
+        toast?.classList.add(
             "show"
         );
 
@@ -2129,7 +2046,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(
             () => {
 
-                toast.classList.remove(
+                toast?.classList.remove(
                     "show"
                 );
 
