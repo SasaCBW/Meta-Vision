@@ -1,6 +1,6 @@
 /* =========================================================
-   META VISION — FIREBASE
-   Projeto: meta-vision-d30e1
+   META VISION
+   FIREBASE CONFIGURATION
 ========================================================= */
 
 const firebaseConfig = {
@@ -33,7 +33,10 @@ const firebaseConfig = {
    INICIALIZAÇÃO
 ========================================================= */
 
-if (!firebase.apps.length) {
+if (
+    typeof firebase !== "undefined" &&
+    !firebase.apps.length
+) {
 
     firebase.initializeApp(
         firebaseConfig
@@ -46,37 +49,41 @@ if (!firebase.apps.length) {
    SERVIÇOS
 ========================================================= */
 
-const auth =
-    firebase.auth();
-
-
-/*
-   Firestore e Storage serão ativados
-   quando os respectivos SDKs estiverem
-   carregados nas páginas administrativas.
-*/
-
+let auth = null;
 let db = null;
-
 let storage = null;
 
 
-if (firebase.firestore) {
+if (
+    typeof firebase !== "undefined"
+) {
 
-    db =
-        firebase.firestore();
+    if (firebase.auth) {
 
-}
+        auth =
+            firebase.auth();
+
+    }
 
 
-if (firebase.storage) {
+    if (firebase.firestore) {
 
-    storage =
-        firebase.storage();
+        db =
+            firebase.firestore();
+
+    }
+
+
+    if (firebase.storage) {
+
+        storage =
+            firebase.storage();
+
+    }
 
 }
 
 
 console.log(
-    "META VISION Firebase conectado."
+    "META VISION // Firebase initialized"
 );
