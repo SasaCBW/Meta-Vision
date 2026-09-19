@@ -1,6 +1,5 @@
 /* =========================================================
-   META VISION
-   FIREBASE CONFIGURATION
+   META VISION — FIREBASE
 ========================================================= */
 
 const firebaseConfig = {
@@ -29,10 +28,6 @@ const firebaseConfig = {
 };
 
 
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
-
 if (
     typeof firebase !== "undefined" &&
     !firebase.apps.length
@@ -45,45 +40,6 @@ if (
 }
 
 
-/* =========================================================
-   SERVIÇOS
-========================================================= */
-
-let auth = null;
-let db = null;
-let storage = null;
-
-
-if (
-    typeof firebase !== "undefined"
-) {
-
-    if (firebase.auth) {
-
-        auth =
-            firebase.auth();
-
-    }
-
-
-    if (firebase.firestore) {
-
-        db =
-            firebase.firestore();
-
-    }
-
-
-    if (firebase.storage) {
-
-        storage =
-            firebase.storage();
-
-    }
-
-}
-
-
 console.log(
-    "META VISION // Firebase initialized"
+    "META VISION // Firebase conectado"
 );
