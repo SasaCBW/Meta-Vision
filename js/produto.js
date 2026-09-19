@@ -1,46 +1,29 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-    const grid =
-        document.getElementById(
-            "productsGrid"
-        ) ||
-        document.getElementById(
-            "productGrid"
+    const params =
+        new URLSearchParams(
+            window.location.search
         );
 
 
-    const searchInput =
-        document.getElementById(
-            "productSearch"
+    const productId =
+        params.get("id");
+
+
+    if (!productId) {
+
+        window.location.replace(
+            "produtos.html"
         );
 
-
-    const counter =
-        document.getElementById(
-            "visibleProducts"
-        );
-
-
-    const filterButtons =
-        document.querySelectorAll(
-            "[data-filter]"
-        );
-
-
-    let products = [];
-
-    let activeFilter = "all";
+        return;
+    }
 
 
     if (
         typeof firebase === "undefined" ||
-        !firebase.apps.length ||
-        !firebase.firestore
+        !firebase.apps.length
     ) {
-
-        console.error(
-            "Firestore não carregado."
-        );
 
         return;
     }
@@ -50,309 +33,428 @@ document.addEventListener("DOMContentLoaded", () => {
         firebase.firestore();
 
 
-    /* =====================================================
-       FIRESTORE
-    ===================================================== */
+    try {
 
-    db.collection("products")
-        .onSnapshot(
-            snapshot => {
-
-                products =
-                    snapshot.docs
-                        .map(document => ({
-
-                            id:
-                                document.id,
-
-                            ...document.data()
-
-                        }))
-                        .filter(
-                            product =>
-                                product.active !==
-                                false
-                        );
+        const document =
+            await db
+                .collection("products")
+                .doc(productId)
+                .get();
 
 
-                render();
+        if (!document.exists) {
 
-            },
-            error => {
-
-                console.error(
-                    "Erro no catálogo:",
-                    error
-                );
-
-            }
-        );
-
-
-    /* =====================================================
-       FILTRO
-    ===================================================== */
-
-    filterButtons.forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                filterButtons.forEach(
-                    item =>
-                        item.classList.remove(
-                            "active"
-                        )
-                );
-
-
-                button.classList.add(
-                    "active"
-                );
-
-
-                activeFilter =
-                    (
-                        button.dataset.filter ||
-                        "all"
-                    ).toLowerCase();
-
-
-                render();
-
-            }
-        );
-
-    });
-
-
-    searchInput?.addEventListener(
-        "input",
-        render
-    );
-
-
-    /* =====================================================
-       RENDER
-    ===================================================== */
-
-    function render() {
-
-        if (!grid) {
-            return;
-        }
-
-
-        const query =
-            normalize(
-                searchInput?.value || ""
+            window.location.replace(
+                "produtos.html"
             );
 
-
-        const filtered =
-            products.filter(product => {
-
-                const family =
-                    String(
-                        product.family || ""
-                    ).toLowerCase();
-
-
-                const matchesFamily =
-                    activeFilter === "all" ||
-                    family ===
-                        activeFilter;
-
-
-                const searchText =
-                    normalize(`
-
-                        ${product.name || ""}
-
-                        ${product.family || ""}
-
-                        ${product.variant || ""}
-
-                        ${product.description || ""}
-
-                    `);
-
-
-                const matchesSearch =
-                    !query ||
-                    searchText.includes(
-                        query
-                    );
-
-
-                return (
-                    matchesFamily &&
-                    matchesSearch
-                );
-
-            });
-
-
-        if (counter) {
-
-            counter.textContent =
-                filtered.length;
-
-        }
-
-
-        if (!filtered.length) {
-
-            grid.innerHTML = `
-
-                <div class="no-results">
-
-                    <strong>
-                        NENHUM PRODUTO
-                    </strong>
-
-                    <span>
-                        Nenhum modelo encontrado.
-                    </span>
-
-                </div>
-
-            `;
-
             return;
         }
 
 
-        grid.innerHTML =
-            filtered.map(product => `
+        const product = {
 
-                <article
-                    class="product-card"
-                    data-category="${escapeHTML(
-                        String(
-                            product.family ||
-                            ""
-                        ).toLowerCase()
-                    )}"
-                >
+            id:
+                document.id,
 
-                    <a
-                        href="produto.html?id=${encodeURIComponent(
-                            product.id
-                        )}"
-                        class="product-card-link"
-                    >
+            ...document.data()
 
-                        <div class="product-image">
-
-                            ${product.imageURL
-                                ? `
-                                    <img
-                                        src="${escapeHTML(
-                                            product.imageURL
-                                        )}"
-                                        alt="${escapeHTML(
-                                            product.name ||
-                                            "Produto"
-                                        )}"
-                                        loading="lazy"
-                                    >
-                                  `
-                                : `
-                                    <div class="
-                                        hstn-placeholder
-                                    ">
-
-                                        <span>
-                                            SMART EYEWEAR
-                                        </span>
-
-                                        <strong>
-                                            ${escapeHTML(
-                                                product.family ||
-                                                "META"
-                                            )}
-                                        </strong>
-
-                                    </div>
-                                  `
-                            }
-
-                        </div>
+        };
 
 
-                        <div class="product-card-content">
-
-                            <span class="product-family">
-
-                                ${escapeHTML(
-                                    product.family ||
-                                    "META VISION"
-                                )}
-
-                            </span>
+        renderProduct(product);
 
 
-                            <h2>
+    } catch (error) {
 
-                                ${escapeHTML(
-                                    product.name ||
-                                    "Produto"
-                                )}
-
-                            </h2>
-
-
-                            <p>
-
-                                ${escapeHTML(
-                                    product.variant ||
-                                    ""
-                                )}
-
-                            </p>
-
-
-                            <div class="product-card-bottom">
-
-                                <strong>
-
-                                    ${escapeHTML(
-                                        product.price ||
-                                        "SOB CONSULTA"
-                                    )}
-
-                                </strong>
-
-                                <span>
-                                    VER PRODUTO
-                                    →
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </a>
-
-                </article>
-
-            `).join("");
+        console.error(
+            "Produto:",
+            error
+        );
 
     }
 
 
-    function normalize(value) {
+    function renderProduct(product) {
 
-        return String(value)
-            .normalize("NFD")
-            .replace(
-                /[\u0300-\u036f]/g,
-                ""
-            )
-            .toLowerCase()
-            .trim();
+        setText(
+            "breadcrumbProduct",
+            product.name
+        );
+
+        setText(
+            "productFamily",
+            product.family
+        );
+
+        setText(
+            "productName",
+            product.name
+        );
+
+        setText(
+            "productVariant",
+            product.variant
+        );
+
+        setText(
+            "selectedVariant",
+            product.variant
+        );
+
+        setText(
+            "productDescription",
+            product.description ||
+            "Smart eyewear META VISION."
+        );
+
+        setText(
+            "productPrice",
+            product.price ||
+            "SOB CONSULTA"
+        );
+
+
+        const image =
+            document.getElementById(
+                "mainProductImage"
+            );
+
+
+        const placeholder =
+            document.getElementById(
+                "hstnPlaceholder"
+            );
+
+
+        if (
+            product.imageURL &&
+            image
+        ) {
+
+            image.src =
+                product.imageURL;
+
+            image.alt =
+                product.name || "Produto";
+
+            image.style.display =
+                "block";
+
+
+            if (placeholder) {
+
+                placeholder.style.display =
+                    "none";
+
+            }
+
+        } else {
+
+            if (image) {
+
+                image.style.display =
+                    "none";
+
+            }
+
+
+            if (placeholder) {
+
+                placeholder.style.display =
+                    "";
+
+            }
+
+        }
+
+
+        const selector =
+            document.getElementById(
+                "variantSelector"
+            );
+
+
+        if (selector) {
+
+            selector.innerHTML = `
+
+                <button
+                    type="button"
+                    class="variant-button active"
+                >
+
+                    ${escapeHTML(
+                        product.variant ||
+                        "Padrão"
+                    )}
+
+                </button>
+
+            `;
+
+        }
+
+
+        setupQuantity();
+
+        setupCart(product);
+
+    }
+
+
+    function setupQuantity() {
+
+        const value =
+            document.getElementById(
+                "quantity"
+            );
+
+
+        const minus =
+            document.getElementById(
+                "quantityMinus"
+            );
+
+
+        const plus =
+            document.getElementById(
+                "quantityPlus"
+            );
+
+
+        let quantity = 1;
+
+
+        const update = () => {
+
+            if (value) {
+
+                value.textContent =
+                    quantity;
+
+            }
+
+        };
+
+
+        minus?.addEventListener(
+            "click",
+            () => {
+
+                quantity =
+                    Math.max(
+                        1,
+                        quantity - 1
+                    );
+
+                update();
+
+            }
+        );
+
+
+        plus?.addEventListener(
+            "click",
+            () => {
+
+                quantity =
+                    Math.min(
+                        10,
+                        quantity + 1
+                    );
+
+                update();
+
+            }
+        );
+
+    }
+
+
+    function setupCart(product) {
+
+        const button =
+            document.getElementById(
+                "addToCart"
+            );
+
+
+        button?.addEventListener(
+            "click",
+            () => {
+
+                const quantity =
+                    Number(
+                        document
+                            .getElementById(
+                                "quantity"
+                            )
+                            ?.textContent ||
+                        1
+                    );
+
+
+                let cart = [];
+
+
+                try {
+
+                    cart =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "metaVisionCart"
+                            )
+                        ) || [];
+
+                } catch (error) {
+
+                    cart = [];
+
+                }
+
+
+                const existing =
+                    cart.find(
+                        item =>
+                            item.productId ===
+                            product.id
+                    );
+
+
+                if (existing) {
+
+                    existing.quantity =
+                        Math.min(
+                            10,
+                            Number(
+                                existing.quantity ||
+                                1
+                            ) +
+                            quantity
+                        );
+
+                } else {
+
+                    cart.push({
+
+                        productId:
+                            product.id,
+
+                        family:
+                            product.family || "",
+
+                        name:
+                            product.name || "",
+
+                        variant:
+                            product.variant || "",
+
+                        category:
+                            String(
+                                product.family ||
+                                ""
+                            ).toLowerCase(),
+
+                        image:
+                            product.imageURL ||
+                            "",
+
+                        quantity:
+                            quantity
+
+                    });
+
+                }
+
+
+                localStorage.setItem(
+                    "metaVisionCart",
+                    JSON.stringify(cart)
+                );
+
+
+                updateCartCounter(
+                    cart
+                );
+
+
+                showCartToast();
+
+            }
+        );
+
+    }
+
+
+    function updateCartCounter(cart) {
+
+        const count =
+            cart.reduce(
+                (total, item) =>
+                    total +
+                    Number(
+                        item.quantity || 1
+                    ),
+                0
+            );
+
+
+        const element =
+            document.getElementById(
+                "cartCount"
+            );
+
+
+        if (element) {
+
+            element.textContent =
+                count;
+
+        }
+
+    }
+
+
+    function showCartToast() {
+
+        const toast =
+            document.getElementById(
+                "cartToast"
+            );
+
+
+        toast?.classList.add(
+            "show"
+        );
+
+
+        setTimeout(
+            () => {
+
+                toast?.classList.remove(
+                    "show"
+                );
+
+            },
+            3000
+        );
+
+    }
+
+
+    function setText(id, value) {
+
+        const element =
+            document.getElementById(id);
+
+
+        if (element) {
+
+            element.textContent =
+                value || "";
+
+        }
 
     }
 
