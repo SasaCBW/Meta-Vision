@@ -1,20 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     /*
-        =====================================================
-        META VISION — CONTATO
-
-        IMPORTANTE:
-
-        Coloque abaixo o número de WhatsApp
-        que receberá as mensagens da loja.
-
-        Formato:
-        55 + DDD + número
-
-        Exemplo:
-        5542999999999
-        =====================================================
+       Colocaremos o WhatsApp real
+       da META VISION aqui depois.
     */
 
     const STORE_WHATSAPP = "";
@@ -39,6 +27,26 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById(
             "contactToast"
         );
+
+
+    /* =====================================================
+       FIRESTORE
+    ===================================================== */
+
+    let database = null;
+
+
+    if (
+        typeof firebase !== "undefined" &&
+        firebase.apps &&
+        firebase.apps.length &&
+        firebase.firestore
+    ) {
+
+        database =
+            firebase.firestore();
+
+    }
 
 
     /* =====================================================
@@ -68,25 +76,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) || [];
 
 
-            const quantity =
+            counter.textContent =
                 cart.reduce(
-                    (total, item) => {
-
-                        return (
-                            total +
-                            Number(
-                                item.quantity ||
-                                1
-                            )
-                        );
-
-                    },
+                    (total, item) =>
+                        total +
+                        Number(
+                            item.quantity ||
+                            1
+                        ),
                     0
                 );
-
-
-            counter.textContent =
-                quantity;
 
         } catch (error) {
 
@@ -110,14 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 let value =
                     event.target.value
-                        .replace(
-                            /\D/g,
-                            ""
-                        )
-                        .slice(
-                            0,
-                            11
-                        );
+                        .replace(/\D/g, "")
+                        .slice(0, 11);
 
 
                 if (value.length > 10) {
@@ -171,6 +164,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        const title =
+            toast.querySelector(
+                "strong"
+            );
+
+        const text =
+            toast.querySelector(
+                "span"
+            );
+
+
+        if (title) {
+
+            title.textContent =
+                "MENSAGEM ENVIADA";
+
+        }
+
+
+        if (text) {
+
+            text.textContent =
+                "Recebemos sua solicitação.";
+
+        }
+
+
         toast.classList.add(
             "show"
         );
@@ -184,159 +204,179 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
             },
-            3500
+            4000
         );
 
     }
 
 
     /* =====================================================
-       FORM
+       FORMULÁRIO
     ===================================================== */
 
-    if (form) {
+    form.addEventListener(
+        "submit",
+        async event => {
 
-        form.addEventListener(
-            "submit",
-            event => {
-
-                event.preventDefault();
+            event.preventDefault();
 
 
-                const name =
-                    document
-                        .getElementById(
-                            "contactName"
-                        )
-                        .value
-                        .trim();
+            if (!database) {
 
-
-                const phone =
-                    document
-                        .getElementById(
-                            "contactPhone"
-                        )
-                        .value
-                        .trim();
-
-
-                const email =
-                    document
-                        .getElementById(
-                            "contactEmail"
-                        )
-                        .value
-                        .trim();
-
-
-                const subject =
-                    document
-                        .getElementById(
-                            "contactSubject"
-                        )
-                        .value;
-
-
-                const message =
-                    document
-                        .getElementById(
-                            "contactMessage"
-                        )
-                        .value
-                        .trim();
-
-
-                if (
-                    !name ||
-                    !phone ||
-                    !email ||
-                    !subject ||
-                    !message
-                ) {
-
-                    alert(
-                        "Preencha todos os campos."
-                    );
-
-                    return;
-
-                }
-
-
-                const contactData = {
-
-                    id:
-                        "MSG-" +
-                        Date.now(),
-
-                    name:
-                        name,
-
-                    phone:
-                        phone,
-
-                    email:
-                        email,
-
-                    subject:
-                        subject,
-
-                    message:
-                        message,
-
-                    createdAt:
-                        new Date()
-                            .toISOString()
-
-                };
-
-
-                /*
-                    Salva localmente por enquanto.
-
-                    Quando conectarmos Firebase,
-                    estas mensagens irão para
-                    o painel administrativo.
-                */
-
-                let messages = [];
-
-
-                try {
-
-                    messages =
-                        JSON.parse(
-                            localStorage.getItem(
-                                "metaVisionMessages"
-                            )
-                        ) || [];
-
-                } catch (error) {
-
-                    messages = [];
-
-                }
-
-
-                messages.push(
-                    contactData
+                alert(
+                    "Não foi possível conectar ao atendimento."
                 );
 
+                return;
 
-                localStorage.setItem(
-                    "metaVisionMessages",
-                    JSON.stringify(
-                        messages
+            }
+
+
+            const name =
+                document
+                    .getElementById(
+                        "contactName"
                     )
+                    .value
+                    .trim()
+                    .slice(0, 120);
+
+
+            const phone =
+                document
+                    .getElementById(
+                        "contactPhone"
+                    )
+                    .value
+                    .trim()
+                    .slice(0, 40);
+
+
+            const email =
+                document
+                    .getElementById(
+                        "contactEmail"
+                    )
+                    .value
+                    .trim()
+                    .slice(0, 200);
+
+
+            const subject =
+                document
+                    .getElementById(
+                        "contactSubject"
+                    )
+                    .value
+                    .slice(0, 100);
+
+
+            const message =
+                document
+                    .getElementById(
+                        "contactMessage"
+                    )
+                    .value
+                    .trim()
+                    .slice(0, 2000);
+
+
+            if (
+                !name ||
+                !phone ||
+                !email ||
+                !subject ||
+                !message
+            ) {
+
+                alert(
+                    "Preencha todos os campos."
+                );
+
+                return;
+
+            }
+
+
+            const messageId =
+                "MSG-" +
+                Date.now() +
+                "-" +
+                Math.random()
+                    .toString(36)
+                    .slice(2, 7)
+                    .toUpperCase();
+
+
+            const contactData = {
+
+                id:
+                    messageId,
+
+                name:
+                    name,
+
+                phone:
+                    phone,
+
+                email:
+                    email,
+
+                subject:
+                    subject,
+
+                message:
+                    message,
+
+                read:
+                    false,
+
+                createdAt:
+                    new Date()
+                        .toISOString()
+
+            };
+
+
+            submitButton.disabled =
+                true;
+
+
+            const buttonText =
+                submitButton.querySelector(
+                    "span"
                 );
 
 
+            if (buttonText) {
+
+                buttonText.textContent =
+                    "ENVIANDO...";
+
+            }
+
+
+            try {
+
+                await database
+                    .collection("messages")
+                    .doc(messageId)
+                    .set(contactData);
+
+
+                showToast();
+
+
                 /*
-                    Mensagem pronta para WhatsApp
+                   WhatsApp é opcional.
+
+                   A mensagem já foi salva
+                   no Firestore antes daqui.
                 */
 
-                const whatsappMessage =
+                if (STORE_WHATSAPP) {
+
+                    const whatsappMessage =
 `Olá! Vim pelo site META VISION.
 
 Nome: ${name}
@@ -349,55 +389,58 @@ Mensagem:
 ${message}`;
 
 
-                showToast();
+                    const url =
+                        "https://wa.me/" +
+                        STORE_WHATSAPP +
+                        "?text=" +
+                        encodeURIComponent(
+                            whatsappMessage
+                        );
 
 
-                /*
-                    Se ainda não houver WhatsApp
-                    configurado, apenas salvamos
-                    a solicitação localmente.
-                */
-
-                if (!STORE_WHATSAPP) {
-
-                    alert(
-                        "Mensagem registrada no site. O WhatsApp da loja ainda precisa ser configurado."
+                    window.open(
+                        url,
+                        "_blank",
+                        "noopener,noreferrer"
                     );
-
-                    form.reset();
-
-                    return;
 
                 }
 
 
-                const whatsappURL =
-                    "https://wa.me/" +
-                    STORE_WHATSAPP +
-                    "?text=" +
-                    encodeURIComponent(
-                        whatsappMessage
-                    );
+                form.reset();
 
 
-                window.open(
-                    whatsappURL,
-                    "_blank",
-                    "noopener,noreferrer"
+            } catch (error) {
+
+                console.error(
+                    "Erro ao enviar mensagem:",
+                    error
                 );
 
 
-                form.reset();
+                alert(
+                    "Não foi possível enviar a mensagem. Tente novamente."
+                );
+
+
+            } finally {
+
+                submitButton.disabled =
+                    false;
+
+
+                if (buttonText) {
+
+                    buttonText.textContent =
+                        "ENVIAR MENSAGEM";
+
+                }
 
             }
-        );
 
-    }
+        }
+    );
 
-
-    /* =====================================================
-       START
-    ===================================================== */
 
     updateCartCounter();
 
