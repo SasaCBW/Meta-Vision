@@ -41,7 +41,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       LOCAL STORAGE
+       FIRESTORE
+    ===================================================== */
+
+    let database = null;
+
+    if (
+        typeof firebase !== "undefined" &&
+        firebase.apps &&
+        firebase.apps.length &&
+        firebase.firestore
+    ) {
+
+        database =
+            firebase.firestore();
+
+    }
+
+
+    /* =====================================================
+       CARRINHO
     ===================================================== */
 
     function getCart() {
@@ -77,13 +96,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
-
     function escapeHTML(value) {
 
-        return String(value || "")
+        return String(value ?? "")
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
@@ -126,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <img
                         src="${escapeHTML(item.image)}"
-                        alt="${name} ${variant}"
+                        alt="${name}"
                     >
 
                 </div>
@@ -143,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ">
 
                     <small>
-                        OAKLEY META
+                        SMART EYEWEAR
                     </small>
 
                     <strong>
@@ -168,7 +183,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     ${imageHTML}
 
-
                     <div class="cart-product-data">
 
                         <span>
@@ -184,9 +198,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         </strong>
 
                         <small>
-                            SMART EYEWEAR
+                            PREÇO SOB CONSULTA
                         </small>
-
 
                         <button
                             type="button"
@@ -215,30 +228,25 @@ document.addEventListener("DOMContentLoaded", () => {
                         <button
                             type="button"
                             data-minus="${index}"
-                            aria-label="Diminuir quantidade"
                         >
                             −
                         </button>
-
 
                         <strong>
                             ${Number(item.quantity || 1)}
                         </strong>
 
-
                         <button
                             type="button"
                             data-plus="${index}"
-                            aria-label="Aumentar quantidade"
                         >
                             +
                         </button>
 
                     </div>
 
-
                     <span class="item-price-label">
-                        PREÇO SOB CONSULTA
+                        SOB CONSULTA
                     </span>
 
                 </div>
@@ -260,49 +268,32 @@ document.addEventListener("DOMContentLoaded", () => {
             getCart();
 
 
-        if (!cartItems) {
-            return;
-        }
-
-
         cartItems.innerHTML = "";
 
 
-        if (cart.length === 0) {
+        if (!cart.length) {
 
-            if (emptyCart) {
-                emptyCart.classList.add(
-                    "visible"
-                );
-            }
+            emptyCart.classList.add(
+                "visible"
+            );
 
-            if (cartActions) {
-                cartActions.style.display =
-                    "none";
-            }
+            cartActions.style.display =
+                "none";
 
-            if (checkoutButton) {
-                checkoutButton.disabled =
-                    true;
-            }
+            checkoutButton.disabled =
+                true;
 
         } else {
 
-            if (emptyCart) {
-                emptyCart.classList.remove(
-                    "visible"
-                );
-            }
+            emptyCart.classList.remove(
+                "visible"
+            );
 
-            if (cartActions) {
-                cartActions.style.display =
-                    "";
-            }
+            cartActions.style.display =
+                "";
 
-            if (checkoutButton) {
-                checkoutButton.disabled =
-                    false;
-            }
+            checkoutButton.disabled =
+                false;
 
 
             cart.forEach(
@@ -324,49 +315,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
         updateSummary(cart);
 
-        bindItemButtons();
+        bindControls();
 
     }
 
 
-    /* =====================================================
-       SUMMARY
-    ===================================================== */
-
     function updateSummary(cart) {
 
-        const totalQuantity =
+        const quantity =
             cart.reduce(
-                (total, item) => {
-
-                    return (
-                        total +
-                        Number(
-                            item.quantity ||
-                            1
-                        )
-                    );
-
-                },
+                (total, item) =>
+                    total +
+                    Number(
+                        item.quantity || 1
+                    ),
                 0
             );
 
 
-        if (summaryItems) {
-            summaryItems.textContent =
-                cart.length;
-        }
+        summaryItems.textContent =
+            cart.length;
 
-
-        if (summaryQuantity) {
-            summaryQuantity.textContent =
-                totalQuantity;
-        }
-
+        summaryQuantity.textContent =
+            quantity;
 
         if (cartCount) {
+
             cartCount.textContent =
-                totalQuantity;
+                quantity;
+
         }
 
     }
@@ -376,12 +353,10 @@ document.addEventListener("DOMContentLoaded", () => {
        CONTROLES
     ===================================================== */
 
-    function bindItemButtons() {
+    function bindControls() {
 
         document
-            .querySelectorAll(
-                "[data-minus]"
-            )
+            .querySelectorAll("[data-minus]")
             .forEach(button => {
 
                 button.addEventListener(
@@ -402,9 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document
-            .querySelectorAll(
-                "[data-plus]"
-            )
+            .querySelectorAll("[data-plus]")
             .forEach(button => {
 
                 button.addEventListener(
@@ -425,9 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document
-            .querySelectorAll(
-                "[data-remove]"
-            )
+            .querySelectorAll("[data-remove]")
             .forEach(button => {
 
                 button.addEventListener(
@@ -448,10 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function changeQuantity(
-        index,
-        amount
-    ) {
+    function changeQuantity(index, change) {
 
         const cart =
             getCart();
@@ -462,25 +430,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        let newQuantity =
+        let quantity =
             Number(
-                cart[index].quantity ||
-                1
-            ) + amount;
+                cart[index].quantity || 1
+            ) + change;
 
 
-        if (newQuantity < 1) {
-            newQuantity = 1;
-        }
-
-
-        if (newQuantity > 10) {
-            newQuantity = 10;
-        }
+        quantity =
+            Math.max(
+                1,
+                Math.min(
+                    10,
+                    quantity
+                )
+            );
 
 
         cart[index].quantity =
-            newQuantity;
+            quantity;
 
 
         saveCart(cart);
@@ -509,50 +476,39 @@ document.addEventListener("DOMContentLoaded", () => {
        LIMPAR
     ===================================================== */
 
-    if (clearCartButton) {
+    clearCartButton.addEventListener(
+        "click",
+        () => {
 
-        clearCartButton.addEventListener(
-            "click",
-            () => {
+            if (
+                !confirm(
+                    "Deseja limpar o carrinho?"
+                )
+            ) {
 
-                const confirmed =
-                    window.confirm(
-                        "Deseja remover todos os produtos do carrinho?"
-                    );
-
-
-                if (!confirmed) {
-                    return;
-                }
-
-
-                localStorage.removeItem(
-                    "metaVisionCart"
-                );
-
-
-                renderCart();
+                return;
 
             }
-        );
 
-    }
+
+            localStorage.removeItem(
+                "metaVisionCart"
+            );
+
+
+            renderCart();
+
+        }
+    );
 
 
     /* =====================================================
        MODAL
     ===================================================== */
 
-    function openCheckout() {
+    function openModal() {
 
-        const cart =
-            getCart();
-
-
-        if (
-            cart.length === 0 ||
-            !checkoutModal
-        ) {
+        if (!getCart().length) {
             return;
         }
 
@@ -568,12 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function closeCheckoutModal() {
-
-        if (!checkoutModal) {
-            return;
-        }
-
+    function closeModal() {
 
         checkoutModal.classList.remove(
             "active"
@@ -586,50 +537,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    if (checkoutButton) {
-
-        checkoutButton.addEventListener(
-            "click",
-            openCheckout
-        );
-
-    }
+    checkoutButton.addEventListener(
+        "click",
+        openModal
+    );
 
 
-    if (closeCheckout) {
-
-        closeCheckout.addEventListener(
-            "click",
-            closeCheckoutModal
-        );
-
-    }
+    closeCheckout.addEventListener(
+        "click",
+        closeModal
+    );
 
 
-    if (checkoutOverlay) {
-
-        checkoutOverlay.addEventListener(
-            "click",
-            closeCheckoutModal
-        );
-
-    }
-
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key ===
-                "Escape"
-            ) {
-
-                closeCheckoutModal();
-
-            }
-
-        }
+    checkoutOverlay.addEventListener(
+        "click",
+        closeModal
     );
 
 
@@ -643,232 +565,318 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    if (phoneInput) {
+    phoneInput.addEventListener(
+        "input",
+        event => {
 
-        phoneInput.addEventListener(
-            "input",
-            event => {
-
-                let value =
-                    event.target.value
-                        .replace(
-                            /\D/g,
-                            ""
-                        )
-                        .slice(
-                            0,
-                            11
-                        );
+            let value =
+                event.target.value
+                    .replace(/\D/g, "")
+                    .slice(0, 11);
 
 
-                if (value.length > 10) {
+            if (value.length > 10) {
 
-                    value =
-                        value.replace(
-                            /(\d{2})(\d{5})(\d{4})/,
-                            "($1) $2-$3"
-                        );
+                value =
+                    value.replace(
+                        /(\d{2})(\d{5})(\d{4})/,
+                        "($1) $2-$3"
+                    );
 
-                } else if (
-                    value.length > 6
-                ) {
+            } else if (
+                value.length > 6
+            ) {
 
-                    value =
-                        value.replace(
-                            /(\d{2})(\d{4})(\d{0,4})/,
-                            "($1) $2-$3"
-                        );
+                value =
+                    value.replace(
+                        /(\d{2})(\d{4})(\d{0,4})/,
+                        "($1) $2-$3"
+                    );
 
-                } else if (
-                    value.length > 2
-                ) {
+            } else if (
+                value.length > 2
+            ) {
 
-                    value =
-                        value.replace(
-                            /(\d{2})(\d+)/,
-                            "($1) $2"
-                        );
-
-                }
-
-
-                event.target.value =
-                    value;
+                value =
+                    value.replace(
+                        /(\d{2})(\d+)/,
+                        "($1) $2"
+                    );
 
             }
-        );
 
-    }
+
+            event.target.value =
+                value;
+
+        }
+    );
 
 
     /* =====================================================
-       GERAR PEDIDO
+       FINALIZAR PEDIDO
     ===================================================== */
 
-    if (checkoutForm) {
+    checkoutForm.addEventListener(
+        "submit",
+        async event => {
 
-        checkoutForm.addEventListener(
-            "submit",
-            event => {
-
-                event.preventDefault();
+            event.preventDefault();
 
 
-                const cart =
-                    getCart();
+            const cart =
+                getCart();
 
 
-                if (cart.length === 0) {
-                    return;
-                }
+            if (!cart.length) {
+                return;
+            }
 
 
-                const customer = {
+            if (!database) {
 
-                    name:
-                        document
-                            .getElementById(
-                                "customerName"
+                alert(
+                    "Não foi possível conectar ao sistema de pedidos."
+                );
+
+                return;
+
+            }
+
+
+            const submitButton =
+                checkoutForm.querySelector(
+                    ".send-order-button"
+                );
+
+
+            submitButton.disabled =
+                true;
+
+
+            submitButton.querySelector(
+                "span"
+            ).textContent =
+                "ENVIANDO...";
+
+
+            const orderId =
+                "MV-" +
+                Date.now() +
+                "-" +
+                Math.random()
+                    .toString(36)
+                    .slice(2, 7)
+                    .toUpperCase();
+
+
+            const customer = {
+
+                name:
+                    document
+                        .getElementById(
+                            "customerName"
+                        )
+                        .value
+                        .trim()
+                        .slice(0, 120),
+
+                email:
+                    document
+                        .getElementById(
+                            "customerEmail"
+                        )
+                        .value
+                        .trim()
+                        .slice(0, 200),
+
+                phone:
+                    document
+                        .getElementById(
+                            "customerPhone"
+                        )
+                        .value
+                        .trim()
+                        .slice(0, 40),
+
+                city:
+                    document
+                        .getElementById(
+                            "customerCity"
+                        )
+                        .value
+                        .trim()
+                        .slice(0, 120),
+
+                notes:
+                    document
+                        .getElementById(
+                            "customerNotes"
+                        )
+                        .value
+                        .trim()
+                        .slice(0, 1000)
+
+            };
+
+
+            /*
+               Enviamos apenas os campos
+               necessários dos produtos.
+            */
+
+            const products =
+                cart
+                    .slice(0, 20)
+                    .map(item => ({
+
+                        productId:
+                            String(
+                                item.productId ||
+                                ""
+                            ).slice(0, 100),
+
+                        family:
+                            String(
+                                item.family ||
+                                ""
+                            ).slice(0, 100),
+
+                        name:
+                            String(
+                                item.name ||
+                                ""
+                            ).slice(0, 150),
+
+                        variant:
+                            String(
+                                item.variant ||
+                                ""
+                            ).slice(0, 150),
+
+                        quantity:
+                            Math.max(
+                                1,
+                                Math.min(
+                                    10,
+                                    Number(
+                                        item.quantity ||
+                                        1
+                                    )
+                                )
                             )
-                            .value
-                            .trim(),
 
-                    email:
-                        document
-                            .getElementById(
-                                "customerEmail"
-                            )
-                            .value
-                            .trim(),
-
-                    phone:
-                        document
-                            .getElementById(
-                                "customerPhone"
-                            )
-                            .value
-                            .trim(),
-
-                    city:
-                        document
-                            .getElementById(
-                                "customerCity"
-                            )
-                            .value
-                            .trim(),
-
-                    notes:
-                        document
-                            .getElementById(
-                                "customerNotes"
-                            )
-                            .value
-                            .trim()
-
-                };
+                    }));
 
 
-                const order = {
+            const order = {
 
-                    id:
-                        "MV-" +
-                        Date.now(),
+                id:
+                    orderId,
 
-                    customer:
-                        customer,
+                customer:
+                    customer,
 
-                    products:
-                        cart,
+                products:
+                    products,
 
-                    status:
-                        "pending",
+                status:
+                    "pending",
 
-                    createdAt:
-                        new Date()
-                            .toISOString()
+                createdAt:
+                    new Date()
+                        .toISOString()
 
-                };
+            };
+
+
+            try {
+
+                await database
+                    .collection("orders")
+                    .doc(orderId)
+                    .set(order);
 
 
                 /*
-                   Por enquanto o pedido
-                   fica salvo no navegador.
-
-                   Depois vamos trocar esta
-                   parte pelo Firebase.
+                   Só apagamos o carrinho
+                   depois da confirmação
+                   do Firestore.
                 */
 
-                const orders =
-                    getLocalOrders();
-
-
-                orders.push(
-                    order
+                localStorage.removeItem(
+                    "metaVisionCart"
                 );
-
-
-                localStorage.setItem(
-                    "metaVisionOrders",
-                    JSON.stringify(
-                        orders
-                    )
-                );
-
-
-                closeCheckoutModal();
-
-
-                showSuccess();
 
 
                 checkoutForm.reset();
 
 
-                /*
-                   NÃO apagamos o carrinho
-                   automaticamente ainda.
+                closeModal();
 
-                   Quando ligarmos o Firebase,
-                   apagaremos somente depois
-                   que o pedido for gravado
-                   com sucesso.
-                */
+
+                renderCart();
+
+
+                showSuccess(
+                    orderId
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Erro ao enviar pedido:",
+                    error
+                );
+
+
+                alert(
+                    "Não foi possível enviar o pedido. Tente novamente."
+                );
+
+
+            } finally {
+
+                submitButton.disabled =
+                    false;
+
+
+                submitButton.querySelector(
+                    "span"
+                ).textContent =
+                    "GERAR SOLICITAÇÃO";
 
             }
-        );
-
-    }
-
-
-    function getLocalOrders() {
-
-        try {
-
-            return (
-                JSON.parse(
-                    localStorage.getItem(
-                        "metaVisionOrders"
-                    )
-                ) || []
-            );
-
-        } catch (error) {
-
-            return [];
 
         }
-
-    }
+    );
 
 
     /* =====================================================
-       SUCCESS
+       SUCESSO
     ===================================================== */
 
-    function showSuccess() {
+    function showSuccess(orderId) {
 
         if (!orderSuccess) {
             return;
+        }
+
+
+        const text =
+            orderSuccess.querySelector(
+                "span"
+            );
+
+
+        if (text) {
+
+            text.textContent =
+                "Pedido " +
+                orderId +
+                " enviado com sucesso.";
+
         }
 
 
@@ -880,22 +888,16 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(
             () => {
 
-                orderSuccess
-                    .classList
-                    .remove(
-                        "show"
-                    );
+                orderSuccess.classList.remove(
+                    "show"
+                );
 
             },
-            4000
+            5000
         );
 
     }
 
-
-    /* =====================================================
-       START
-    ===================================================== */
 
     renderCart();
 
