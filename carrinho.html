@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Carrinho | META VISION</title>
+
+    <meta name="description"
+          content="Revise os produtos adicionados ao seu carrinho META VISION.">
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <link rel="stylesheet"
+          href="css/carrinho.css">
+</head>
+
+<body>
+
+    <!-- BACKGROUND -->
+
+    <div class="site-background">
+
+        <div class="grid-background"></div>
+
+        <div class="cyan-glow glow-1"></div>
+        <div class="cyan-glow glow-2"></div>
+
+        <div class="noise"></div>
+
+    </div>
+
+
+    <!-- HEADER -->
+
+    <header class="header scrolled"
+            id="header">
+
+        <div class="header-container">
+
+            <a href="index.html"
+               class="logo">
+
+                META<span>VISION</span>
+
+            </a>
+
+
+            <nav class="desktop-nav">
+
+                <a href="index.html">
+                    INÍCIO
+                </a>
+
+                <a href="produtos.html">
+                    PRODUTOS
+                </a>
+
+                <a href="index.html#tecnologia">
+                    TECNOLOGIA
+                </a>
+
+                <a href="contato.html">
+                    CONTATO
+                </a>
+
+            </nav>
+
+
+            <div class="header-actions">
+
+                <a href="carrinho.html"
+                   class="cart-button">
+
+                    <i class="fa-solid fa-bag-shopping"></i>
+
+                    <span id="cartCount">
+                        0
+                    </span>
+
+                </a>
+
+
+                <button
+                    class="mobile-menu-button"
+                    id="mobileMenuButton"
+                    aria-label="Abrir menu">
+
+                    <span></span>
+                    <span></span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- MOBILE MENU -->
+
+    <div class="mobile-menu"
+         id="mobileMenu">
+
+        <button
+            id="mobileMenuClose"
+            class="mobile-menu-close">
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+
+        <span class="mobile-menu-label">
+            NAVIGATION
+        </span>
+
+
+        <a href="index.html">
+            01. INÍCIO
+        </a>
+
+        <a href="produtos.html">
+            02. PRODUTOS
+        </a>
+
+        <a href="carrinho.html">
+            03. CARRINHO
+        </a>
+
+        <a href="contato.html">
+            04. CONTATO
+        </a>
+
+    </div>
+
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="cart-hero">
+
+            <div class="cart-hero-grid"></div>
+
+            <div class="cart-hero-glow"></div>
+
+
+            <div class="cart-hero-content">
+
+                <span>
+                    // SEU PEDIDO
+                </span>
+
+
+                <h1>
+
+                    CARRINHO
+
+                    <strong>
+                        DE COMPRAS
+                    </strong>
+
+                </h1>
+
+
+                <p>
+                    Revise os produtos antes de finalizar.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- CARRINHO -->
+
+        <section class="cart-section">
+
+            <div class="cart-layout">
+
+
+                <!-- PRODUTOS -->
+
+                <div class="cart-products">
+
+
+                    <div class="cart-table-header">
+
+                        <span>
+                            PRODUTO
+                        </span>
+
+                        <span>
+                            QUANTIDADE
+                        </span>
+
+                    </div>
+
+
+                    <div id="cartItems"></div>
+
+
+                    <!-- CARRINHO VAZIO -->
+
+                    <div
+                        class="empty-cart"
+                        id="emptyCart">
+
+                        <div class="empty-icon">
+
+                            <i class="fa-solid fa-glasses"></i>
+
+                        </div>
+
+
+                        <span>
+                            CART // EMPTY
+                        </span>
+
+
+                        <h2>
+                            SEU CARRINHO
+                            ESTÁ VAZIO.
+                        </h2>
+
+
+                        <p>
+                            Explore nossa coleção e adicione
+                            um modelo para continuar.
+                        </p>
+
+
+                        <a
+                            href="produtos.html"
+                            class="empty-button">
+
+                            EXPLORAR PRODUTOS
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- FOOTER DO CARRINHO -->
+
+                    <div
+                        class="cart-actions"
+                        id="cartActions">
+
+                        <a href="produtos.html">
+
+                            <i class="fa-solid fa-arrow-left"></i>
+
+                            CONTINUAR COMPRANDO
+
+                        </a>
+
+
+                        <button
+                            type="button"
+                            id="clearCart">
+
+                            <i class="fa-regular fa-trash-can"></i>
+
+                            LIMPAR CARRINHO
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RESUMO -->
+
+                <aside class="order-summary">
+
+                    <span class="summary-code">
+                        ORDER // SUMMARY
+                    </span>
+
+
+                    <h2>
+                        RESUMO DO PEDIDO
+                    </h2>
+
+
+                    <div class="summary-line">
+
+                        <span>
+                            PRODUTOS
+                        </span>
+
+                        <strong id="summaryItems">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-line">
+
+                        <span>
+                            QUANTIDADE TOTAL
+                        </span>
+
+                        <strong id="summaryQuantity">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-line">
+
+                        <span>
+                            VALOR
+                        </span>
+
+                        <strong>
+                            SOB CONSULTA
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-line">
+
+                        <span>
+                            ENTREGA
+                        </span>
+
+                        <strong>
+                            A DEFINIR
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-total">
+
+                        <span>
+                            TOTAL
+                        </span>
+
+                        <strong>
+                            SOB CONSULTA
+                        </strong>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="checkout-button"
+                        id="checkoutButton">
+
+                        <span>
+                            FINALIZAR PEDIDO
+                        </span>
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+
+                    <p class="checkout-warning">
+
+                        O pedido ainda não realiza cobrança
+                        automática. Os valores e disponibilidade
+                        serão confirmados antes do pagamento.
+
+                    </p>
+
+
+                    <div class="summary-benefits">
+
+                        <div>
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            <span>
+                                COMPRA SEGURA
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <i class="fa-solid fa-headset"></i>
+
+                            <span>
+                                SUPORTE
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <i class="fa-solid fa-box"></i>
+
+                            <span>
+                                ESTOQUE
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+
+        <!-- MODAL FINALIZAÇÃO -->
+
+        <div
+            class="checkout-modal"
+            id="checkoutModal">
+
+            <div class="checkout-overlay"
+                 id="checkoutOverlay"></div>
+
+
+            <div class="checkout-modal-box">
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="closeCheckout">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+
+                <span class="modal-code">
+                    // ORDER REQUEST
+                </span>
+
+
+                <h2>
+                    FINALIZAR
+                    <strong>PEDIDO.</strong>
+                </h2>
+
+
+                <p>
+                    Preencha seus dados para gerar
+                    a solicitação do pedido.
+                </p>
+
+
+                <form id="checkoutForm">
+
+
+                    <div class="checkout-field">
+
+                        <label for="customerName">
+                            NOME
+                        </label>
+
+                        <input
+                            type="text"
+                            id="customerName"
+                            placeholder="Seu nome"
+                            required>
+
+                    </div>
+
+
+                    <div class="checkout-field">
+
+                        <label for="customerEmail">
+                            E-MAIL
+                        </label>
+
+                        <input
+                            type="email"
+                            id="customerEmail"
+                            placeholder="seuemail@email.com"
+                            required>
+
+                    </div>
+
+
+                    <div class="checkout-field">
+
+                        <label for="customerPhone">
+                            WHATSAPP
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="customerPhone"
+                            placeholder="(42) 99999-9999"
+                            required>
+
+                    </div>
+
+
+                    <div class="checkout-field">
+
+                        <label for="customerCity">
+                            CIDADE
+                        </label>
+
+                        <input
+                            type="text"
+                            id="customerCity"
+                            placeholder="Sua cidade"
+                            required>
+
+                    </div>
+
+
+                    <div class="checkout-field">
+
+                        <label for="customerNotes">
+                            OBSERVAÇÕES
+                        </label>
+
+                        <textarea
+                            id="customerNotes"
+                            placeholder="Cor, dúvidas ou outras informações..."></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="send-order-button">
+
+                        <span>
+                            GERAR SOLICITAÇÃO
+                        </span>
+
+                        <i class="fa-solid fa-paper-plane"></i>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONFIRMAÇÃO -->
+
+        <div
+            class="order-success"
+            id="orderSuccess">
+
+            <i class="fa-solid fa-check"></i>
+
+            <div>
+
+                <strong>
+                    PEDIDO PREPARADO
+                </strong>
+
+                <span>
+                    Sua solicitação foi gerada.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- INFO -->
+
+        <section class="cart-information">
+
+            <div class="cart-info-container">
+
+
+                <article>
+
+                    <span>
+                        01
+                    </span>
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <h3>
+                        COMPRA SEGURA
+                    </h3>
+
+                    <p>
+                        Seus dados serão utilizados
+                        apenas para processar sua solicitação.
+                    </p>
+
+                </article>
+
+
+                <article>
+
+                    <span>
+                        02
+                    </span>
+
+                    <i class="fa-solid fa-box-open"></i>
+
+                    <h3>
+                        CONFIRMAÇÃO
+                    </h3>
+
+                    <p>
+                        Estoque, valores e condições serão
+                        confirmados antes da conclusão.
+                    </p>
+
+                </article>
+
+
+                <article>
+
+                    <span>
+                        03
+                    </span>
+
+                    <i class="fa-solid fa-comments"></i>
+
+                    <h3>
+                        ATENDIMENTO
+                    </h3>
+
+                    <p>
+                        Entre em contato para tirar dúvidas
+                        sobre modelos e configurações.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <div class="footer-main">
+
+                <div>
+
+                    <a
+                        href="index.html"
+                        class="logo footer-logo">
+
+                        META<span>VISION</span>
+
+                    </a>
+
+                    <p>
+                        Smart eyewear.
+                        Redefining perspective.
+                    </p>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <strong>
+                        NAVEGAÇÃO
+                    </strong>
+
+                    <a href="index.html">
+                        Início
+                    </a>
+
+                    <a href="produtos.html">
+                        Produtos
+                    </a>
+
+                    <a href="carrinho.html">
+                        Carrinho
+                    </a>
+
+                    <a href="contato.html">
+                        Contato
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <strong>
+                        MODELOS
+                    </strong>
+
+                    <a href="produtos.html">
+                        Vanguard
+                    </a>
+
+                    <a href="produtos.html">
+                        HSTN
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <strong>
+                        SISTEMA
+                    </strong>
+
+                    <a href="admin-login.html">
+                        Administração
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <span>
+                    © <span id="currentYear"></span>
+                    META VISION
+                </span>
+
+                <span>
+                    SMART EYEWEAR STORE
+                </span>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script src="js/script.js"></script>
+    <script src="js/carrinho.js"></script>
+
+</body>
+</html>
