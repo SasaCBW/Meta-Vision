@@ -1,96 +1,125 @@
+/* =========================================================
+   META VISION
+   CONTATO + FIRESTORE + WHATSAPP
+========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
 
-    /*
-       Colocaremos o WhatsApp real
-       da META VISION aqui depois.
-    */
+    /* =====================================================
+       CONFIGURAÇÃO
+    ===================================================== */
 
-    const STORE_WHATSAPP = "";
+    const STORE_WHATSAPP = "5542988620679";
 
-
-    const form =
-        document.getElementById(
-            "contactForm"
-        );
-
-    const phoneInput =
-        document.getElementById(
-            "contactPhone"
-        );
-
-    const submitButton =
-        document.getElementById(
-            "contactSubmit"
-        );
-
-    const toast =
-        document.getElementById(
-            "contactToast"
-        );
+    const CART_KEY = "metaVisionCart";
 
 
     /* =====================================================
-       FIRESTORE
+       FIREBASE
     ===================================================== */
 
     let database = null;
 
-
     if (
         typeof firebase !== "undefined" &&
-        firebase.apps &&
         firebase.apps.length &&
         firebase.firestore
     ) {
 
-        database =
-            firebase.firestore();
+        database = firebase.firestore();
+
+        console.log(
+            "META VISION // Contato conectado ao Firestore"
+        );
+
+    } else {
+
+        console.error(
+            "META VISION // Firestore não foi carregado."
+        );
 
     }
 
 
     /* =====================================================
-       CARRINHO
+       ELEMENTOS
     ===================================================== */
+
+    const form =
+        document.getElementById("contactForm");
+
+    const nameInput =
+        document.getElementById("contactName");
+
+    const phoneInput =
+        document.getElementById("contactPhone");
+
+    const emailInput =
+        document.getElementById("contactEmail");
+
+    const subjectInput =
+        document.getElementById("contactSubject");
+
+    const messageInput =
+        document.getElementById("contactMessage");
+
+    const privacyInput =
+        document.getElementById("contactPrivacy");
+
+    const toast =
+        document.getElementById("contactToast");
+
+    const cartCount =
+        document.getElementById("cartCount");
+
+
+    /* =====================================================
+       CONTADOR DO CARRINHO
+    ===================================================== */
+
+    updateCartCounter();
+
 
     function updateCartCounter() {
 
-        const counter =
-            document.getElementById(
-                "cartCount"
-            );
-
-
-        if (!counter) {
-            return;
-        }
-
+        let cart = [];
 
         try {
 
-            const cart =
+            cart =
                 JSON.parse(
                     localStorage.getItem(
-                        "metaVisionCart"
+                        CART_KEY
                     )
                 ) || [];
 
-
-            counter.textContent =
-                cart.reduce(
-                    (total, item) =>
-                        total +
-                        Number(
-                            item.quantity ||
-                            1
-                        ),
-                    0
-                );
-
         } catch (error) {
 
-            counter.textContent =
-                "0";
+            cart = [];
+
+        }
+
+
+        const total =
+            cart.reduce(
+                (sum, item) => {
+
+                    return (
+                        sum +
+                        Number(
+                            item.quantity || 1
+                        )
+                    );
+
+                },
+                0
+            );
+
+
+        if (cartCount) {
+
+            cartCount.textContent =
+                total;
 
         }
 
@@ -98,188 +127,100 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       TELEFONE
+       MÁSCARA DE WHATSAPP
     ===================================================== */
 
-    if (phoneInput) {
+    phoneInput?.addEventListener(
+        "input",
+        event => {
 
-        phoneInput.addEventListener(
-            "input",
-            event => {
-
-                let value =
-                    event.target.value
-                        .replace(/\D/g, "")
-                        .slice(0, 11);
+            let value =
+                event.target.value
+                    .replace(/\D/g, "")
+                    .slice(0, 11);
 
 
-                if (value.length > 10) {
+            if (value.length > 10) {
 
-                    value =
-                        value.replace(
-                            /(\d{2})(\d{5})(\d{4})/,
-                            "($1) $2-$3"
-                        );
+                value =
+                    value.replace(
+                        /^(\d{2})(\d{5})(\d{4})$/,
+                        "($1) $2-$3"
+                    );
 
-                } else if (
-                    value.length > 6
-                ) {
+            } else if (value.length > 6) {
 
-                    value =
-                        value.replace(
-                            /(\d{2})(\d{4})(\d{0,4})/,
-                            "($1) $2-$3"
-                        );
+                value =
+                    value.replace(
+                        /^(\d{2})(\d{4})(\d{0,4})$/,
+                        "($1) $2-$3"
+                    );
 
-                } else if (
-                    value.length > 2
-                ) {
+            } else if (value.length > 2) {
 
-                    value =
-                        value.replace(
-                            /(\d{2})(\d+)/,
-                            "($1) $2"
-                        );
+                value =
+                    value.replace(
+                        /^(\d{2})(\d+)/,
+                        "($1) $2"
+                    );
 
-                }
+            } else if (value.length > 0) {
 
-
-                event.target.value =
-                    value;
+                value =
+                    value.replace(
+                        /^(\d{0,2})/,
+                        "($1"
+                    );
 
             }
-        );
 
-    }
+
+            event.target.value =
+                value;
+
+        }
+    );
 
 
     /* =====================================================
-       TOAST
+       ENVIO DO FORMULÁRIO
     ===================================================== */
 
-    function showToast() {
-
-        if (!toast) {
-            return;
-        }
-
-
-        const title =
-            toast.querySelector(
-                "strong"
-            );
-
-        const text =
-            toast.querySelector(
-                "span"
-            );
-
-
-        if (title) {
-
-            title.textContent =
-                "MENSAGEM ENVIADA";
-
-        }
-
-
-        if (text) {
-
-            text.textContent =
-                "Recebemos sua solicitação.";
-
-        }
-
-
-        toast.classList.add(
-            "show"
-        );
-
-
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            4000
-        );
-
-    }
-
-
-    /* =====================================================
-       FORMULÁRIO
-    ===================================================== */
-
-    form.addEventListener(
+    form?.addEventListener(
         "submit",
         async event => {
 
             event.preventDefault();
 
 
-            if (!database) {
-
-                alert(
-                    "Não foi possível conectar ao atendimento."
-                );
-
-                return;
-
-            }
-
+            /* =============================================
+               PEGAR DADOS
+            ============================================= */
 
             const name =
-                document
-                    .getElementById(
-                        "contactName"
-                    )
-                    .value
-                    .trim()
-                    .slice(0, 120);
-
+                nameInput?.value
+                    .trim() || "";
 
             const phone =
-                document
-                    .getElementById(
-                        "contactPhone"
-                    )
-                    .value
-                    .trim()
-                    .slice(0, 40);
-
+                phoneInput?.value
+                    .trim() || "";
 
             const email =
-                document
-                    .getElementById(
-                        "contactEmail"
-                    )
-                    .value
-                    .trim()
-                    .slice(0, 200);
-
+                emailInput?.value
+                    .trim() || "";
 
             const subject =
-                document
-                    .getElementById(
-                        "contactSubject"
-                    )
-                    .value
-                    .slice(0, 100);
-
+                subjectInput?.value
+                    .trim() || "";
 
             const message =
-                document
-                    .getElementById(
-                        "contactMessage"
-                    )
-                    .value
-                    .trim()
-                    .slice(0, 2000);
+                messageInput?.value
+                    .trim() || "";
 
+
+            /* =============================================
+               VALIDAÇÃO
+            ============================================= */
 
             if (
                 !name ||
@@ -289,7 +230,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 !message
             ) {
 
-                alert(
+                showToast(
+                    "CAMPOS INCOMPLETOS",
                     "Preencha todos os campos."
                 );
 
@@ -298,15 +240,95 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            const messageId =
-                "MSG-" +
-                Date.now() +
-                "-" +
-                Math.random()
-                    .toString(36)
-                    .slice(2, 7)
-                    .toUpperCase();
+            if (!isValidEmail(email)) {
 
+                showToast(
+                    "E-MAIL INVÁLIDO",
+                    "Digite um e-mail válido."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                privacyInput &&
+                !privacyInput.checked
+            ) {
+
+                showToast(
+                    "CONFIRMAÇÃO NECESSÁRIA",
+                    "Aceite o envio dos dados para continuar."
+                );
+
+                return;
+
+            }
+
+
+            if (!database) {
+
+                showToast(
+                    "ERRO DE CONEXÃO",
+                    "Não foi possível conectar ao sistema."
+                );
+
+                return;
+
+            }
+
+
+            /* =============================================
+               BOTÃO
+            ============================================= */
+
+            const submitButton =
+                form.querySelector(
+                    'button[type="submit"]'
+                );
+
+
+            const originalHTML =
+                submitButton
+                    ? submitButton.innerHTML
+                    : "";
+
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    true;
+
+
+                submitButton.innerHTML = `
+
+                    <span>
+                        ENVIANDO...
+                    </span>
+
+                    <i class="
+                        fa-solid
+                        fa-spinner
+                        fa-spin
+                    "></i>
+
+                `;
+
+            }
+
+
+            /* =============================================
+               ID DA MENSAGEM
+            ============================================= */
+
+            const messageId =
+                createMessageId();
+
+
+            /* =============================================
+               DOCUMENTO FIRESTORE
+            ============================================= */
 
             const contactData = {
 
@@ -314,19 +336,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     messageId,
 
                 name:
-                    name,
+                    name.slice(
+                        0,
+                        120
+                    ),
 
                 phone:
-                    phone,
+                    phone.slice(
+                        0,
+                        40
+                    ),
 
                 email:
-                    email,
+                    email.slice(
+                        0,
+                        200
+                    ),
 
                 subject:
-                    subject,
+                    subject.slice(
+                        0,
+                        100
+                    ),
 
                 message:
-                    message,
+                    message.slice(
+                        0,
+                        2000
+                    ),
 
                 read:
                     false,
@@ -338,25 +375,11 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
 
-            submitButton.disabled =
-                true;
-
-
-            const buttonText =
-                submitButton.querySelector(
-                    "span"
-                );
-
-
-            if (buttonText) {
-
-                buttonText.textContent =
-                    "ENVIANDO...";
-
-            }
-
-
             try {
+
+                /* =========================================
+                   SALVAR NO FIRESTORE
+                ========================================= */
 
                 await database
                     .collection("messages")
@@ -364,75 +387,91 @@ document.addEventListener("DOMContentLoaded", () => {
                     .set(contactData);
 
 
-                showToast();
+                console.log(
+                    "META VISION // Mensagem salva:",
+                    messageId
+                );
 
 
-                /*
-                   WhatsApp é opcional.
+                /* =========================================
+                   PREPARAR WHATSAPP
+                ========================================= */
 
-                   A mensagem já foi salva
-                   no Firestore antes daqui.
-                */
-
-                if (STORE_WHATSAPP) {
-
-                    const whatsappMessage =
-`Olá! Vim pelo site META VISION.
-
-Nome: ${name}
-E-mail: ${email}
-Telefone: ${phone}
-
-Assunto: ${subject}
-
-Mensagem:
-${message}`;
-
-
-                    const url =
-                        "https://wa.me/" +
-                        STORE_WHATSAPP +
-                        "?text=" +
-                        encodeURIComponent(
-                            whatsappMessage
-                        );
-
-
-                    window.open(
-                        url,
-                        "_blank",
-                        "noopener,noreferrer"
+                const whatsappText =
+                    createWhatsAppMessage(
+                        contactData
                     );
 
-                }
 
+                const whatsappURL =
+                    "https://wa.me/" +
+                    STORE_WHATSAPP +
+                    "?text=" +
+                    encodeURIComponent(
+                        whatsappText
+                    );
+
+
+                /* =========================================
+                   LIMPAR FORMULÁRIO
+                ========================================= */
 
                 form.reset();
+
+
+                /* =========================================
+                   CONFIRMAÇÃO
+                ========================================= */
+
+                showToast(
+                    "MENSAGEM ENVIADA",
+                    "Recebemos sua mensagem. Abrindo o WhatsApp..."
+                );
+
+
+                /* =========================================
+                   ABRIR WHATSAPP
+                ========================================= */
+
+                setTimeout(
+                    () => {
+
+                        window.open(
+                            whatsappURL,
+                            "_blank",
+                            "noopener,noreferrer"
+                        );
+
+                    },
+                    700
+                );
 
 
             } catch (error) {
 
                 console.error(
-                    "Erro ao enviar mensagem:",
+                    "META VISION // Erro ao enviar:",
                     error
                 );
 
 
-                alert(
-                    "Não foi possível enviar a mensagem. Tente novamente."
+                showToast(
+                    "NÃO FOI POSSÍVEL ENVIAR",
+                    getFirebaseErrorMessage(
+                        error
+                    )
                 );
 
 
             } finally {
 
-                submitButton.disabled =
-                    false;
+                if (submitButton) {
 
+                    submitButton.disabled =
+                        false;
 
-                if (buttonText) {
-
-                    buttonText.textContent =
-                        "ENVIAR MENSAGEM";
+                    submitButton.innerHTML =
+                        originalHTML;
 
                 }
 
@@ -442,6 +481,189 @@ ${message}`;
     );
 
 
-    updateCartCounter();
+    /* =====================================================
+       MENSAGEM DO WHATSAPP
+    ===================================================== */
+
+    function createWhatsAppMessage(data) {
+
+        return [
+            "Olá! Entrei em contato pelo site META VISION.",
+            "",
+            `Nome: ${data.name}`,
+            `WhatsApp: ${data.phone}`,
+            `E-mail: ${data.email}`,
+            `Assunto: ${data.subject}`,
+            "",
+            "Mensagem:",
+            data.message,
+            "",
+            `Protocolo: ${data.id}`
+        ].join("\n");
+
+    }
+
+
+    /* =====================================================
+       GERAR ID
+    ===================================================== */
+
+    function createMessageId() {
+
+        const timestamp =
+            Date.now()
+                .toString(36)
+                .toUpperCase();
+
+
+        const random =
+            Math.random()
+                .toString(36)
+                .slice(2, 8)
+                .toUpperCase();
+
+
+        return (
+            `MSG-${timestamp}-${random}`
+        );
+
+    }
+
+
+    /* =====================================================
+       VALIDAR E-MAIL
+    ===================================================== */
+
+    function isValidEmail(email) {
+
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            .test(email);
+
+    }
+
+
+    /* =====================================================
+       ERROS FIREBASE
+    ===================================================== */
+
+    function getFirebaseErrorMessage(
+        error
+    ) {
+
+        const code =
+            error?.code || "";
+
+
+        if (
+            code.includes(
+                "permission-denied"
+            )
+        ) {
+
+            return (
+                "O Firestore bloqueou o envio. Verifique as regras publicadas."
+            );
+
+        }
+
+
+        if (
+            code.includes(
+                "unavailable"
+            )
+        ) {
+
+            return (
+                "O serviço está temporariamente indisponível."
+            );
+
+        }
+
+
+        return (
+            "Tente novamente em alguns instantes."
+        );
+
+    }
+
+
+    /* =====================================================
+       TOAST
+    ===================================================== */
+
+    function showToast(
+        title,
+        message
+    ) {
+
+        if (!toast) {
+
+            console.log(
+                title,
+                message
+            );
+
+            return;
+
+        }
+
+
+        const titleElement =
+            toast.querySelector(
+                "[data-toast-title]"
+            ) ||
+            document.getElementById(
+                "toastTitle"
+            );
+
+
+        const messageElement =
+            toast.querySelector(
+                "[data-toast-message]"
+            ) ||
+            document.getElementById(
+                "toastMessage"
+            );
+
+
+        if (titleElement) {
+
+            titleElement.textContent =
+                title;
+
+        }
+
+
+        if (messageElement) {
+
+            messageElement.textContent =
+                message;
+
+        }
+
+
+        toast.classList.add(
+            "show"
+        );
+
+
+        clearTimeout(
+            window.metaVisionContactToastTimer
+        );
+
+
+        window.metaVisionContactToastTimer =
+            setTimeout(
+                () => {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+                4000
+            );
+
+    }
 
 });
