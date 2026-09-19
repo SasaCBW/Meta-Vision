@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
+    <title>Painel Administrativo | META VISION</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css"
+    >
+</head>
+
+<body>
+
+<div class="admin-app">
+
+    <!-- SIDEBAR -->
+
+    <aside
+        class="admin-sidebar"
+        id="adminSidebar"
+    >
+
+        <div class="sidebar-top">
+
+            <a
+                href="index.html"
+                class="logo"
+            >
+                META<span>VISION</span>
+            </a>
+
+            <button
+                type="button"
+                id="closeSidebar"
+                class="close-sidebar"
+                aria-label="Fechar menu"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <div class="admin-status">
+
+            <span></span>
+
+            SYSTEM ONLINE
+
+        </div>
+
+
+        <nav class="admin-navigation">
+
+            <button
+                type="button"
+                class="admin-nav active"
+                data-section="dashboard"
+            >
+                <i class="fa-solid fa-chart-line"></i>
+
+                <span>
+                    DASHBOARD
+                </span>
+            </button>
+
+
+            <button
+                type="button"
+                class="admin-nav"
+                data-section="orders"
+            >
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                <span>
+                    PEDIDOS
+                </span>
+
+                <strong id="ordersBadge">
+                    0
+                </strong>
+            </button>
+
+
+            <button
+                type="button"
+                class="admin-nav"
+                data-section="products"
+            >
+                <i class="fa-solid fa-glasses"></i>
+
+                <span>
+                    PRODUTOS
+                </span>
+            </button>
+
+
+            <button
+                type="button"
+                class="admin-nav"
+                data-section="stock"
+            >
+                <i class="fa-solid fa-boxes-stacked"></i>
+
+                <span>
+                    ESTOQUE
+                </span>
+            </button>
+
+
+            <button
+                type="button"
+                class="admin-nav"
+                data-section="messages"
+            >
+                <i class="fa-regular fa-message"></i>
+
+                <span>
+                    MENSAGENS
+                </span>
+
+                <strong id="messagesBadge">
+                    0
+                </strong>
+            </button>
+
+
+            <button
+                type="button"
+                class="admin-nav"
+                data-section="clients"
+            >
+                <i class="fa-regular fa-user"></i>
+
+                <span>
+                    CLIENTES
+                </span>
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="admin-profile">
+
+                <div class="profile-icon">
+
+                    <i class="fa-solid fa-user-shield"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        ADMIN
+                    </span>
+
+                    <small id="adminEmail">
+                        verificando...
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="logout-button"
+                id="logoutButton"
+            >
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+                SAIR
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="admin-main">
+
+        <!-- TOPBAR -->
+
+        <header class="admin-header">
+
+            <div>
+
+                <button
+                    type="button"
+                    id="openSidebar"
+                    class="open-sidebar"
+                    aria-label="Abrir menu"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+
+                <div>
+
+                    <span class="header-code">
+                        META VISION // CONTROL CENTER
+                    </span>
+
+                    <h1 id="pageTitle">
+                        DASHBOARD
+                    </h1>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-actions-admin">
+
+                <a
+                    href="index.html"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                    VER LOJA
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- ==================================================
+             DASHBOARD
+        =================================================== -->
+
+        <section
+            class="admin-section active"
+            id="dashboardSection"
+        >
+
+            <div class="dashboard-intro">
+
+                <div>
+
+                    <span>
+                        // SYSTEM OVERVIEW
+                    </span>
+
+                    <h2>
+                        CONTROL
+                        <strong>CENTER.</strong>
+                    </h2>
+
+                </div>
+
+
+                <div class="system-time">
+
+                    <span>
+                        LOCAL SYSTEM
+                    </span>
+
+                    <strong id="adminClock">
+                        --:--
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-cards">
+
+                <article>
+
+                    <div class="card-icon">
+
+                        <i class="fa-solid fa-bag-shopping"></i>
+
+                    </div>
+
+                    <span>
+                        PEDIDOS
+                    </span>
+
+                    <strong id="dashboardOrders">
+                        0
+                    </strong>
+
+                    <small>
+                        TOTAL REGISTRADO
+                    </small>
+
+                </article>
+
+
+                <article>
+
+                    <div class="card-icon">
+
+                        <i class="fa-solid fa-clock"></i>
+
+                    </div>
+
+                    <span>
+                        PENDENTES
+                    </span>
+
+                    <strong id="dashboardPending">
+                        0
+                    </strong>
+
+                    <small>
+                        AGUARDANDO ANÁLISE
+                    </small>
+
+                </article>
+
+
+                <article>
+
+                    <div class="card-icon">
+
+                        <i class="fa-solid fa-glasses"></i>
+
+                    </div>
+
+                    <span>
+                        PRODUTOS
+                    </span>
+
+                    <strong id="dashboardProducts">
+                        0
+                    </strong>
+
+                    <small>
+                        CADASTRADOS
+                    </small>
+
+                </article>
+
+
+                <article>
+
+                    <div class="card-icon">
+
+                        <i class="fa-regular fa-message"></i>
+
+                    </div>
+
+                    <span>
+                        MENSAGENS
+                    </span>
+
+                    <strong id="dashboardMessages">
+                        0
+                    </strong>
+
+                    <small>
+                        RECEBIDAS
+                    </small>
+
+                </article>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+                <div class="admin-panel">
+
+                    <div class="panel-heading">
+
+                        <div>
+
+                            <span>
+                                ORDERS // LATEST
+                            </span>
+
+                            <h3>
+                                PEDIDOS RECENTES
+                            </h3>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            data-go="orders"
+                        >
+                            VER TODOS
+                        </button>
+
+                    </div>
+
+                    <div
+                        class="latest-list"
+                        id="latestOrders"
+                    ></div>
+
+                </div>
+
+
+                <div class="admin-panel">
+
+                    <div class="panel-heading">
+
+                        <div>
+
+                            <span>
+                                SYSTEM // STATUS
+                            </span>
+
+                            <h3>
+                                STATUS
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="system-status-list">
+
+                        <div>
+                            <span>AUTHENTICATION</span>
+                            <strong class="online">
+                                ONLINE
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>FIRESTORE</span>
+                            <strong id="firestoreStatus">
+                                CHECKING
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>STORAGE</span>
+                            <strong>
+                                NEXT STEP
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>ADMIN SESSION</span>
+                            <strong class="online">
+                                ACTIVE
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             PEDIDOS
+        =================================================== -->
+
+        <section
+            class="admin-section"
+            id="ordersSection"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        ORDERS // MANAGEMENT
+                    </span>
+
+                    <h2>
+                        PEDIDOS
+                    </h2>
+
+                </div>
+
+
+                <select id="orderFilter">
+
+                    <option value="all">
+                        Todos
+                    </option>
+
+                    <option value="pending">
+                        Pendentes
+                    </option>
+
+                    <option value="confirmed">
+                        Confirmados
+                    </option>
+
+                    <option value="completed">
+                        Concluídos
+                    </option>
+
+                    <option value="cancelled">
+                        Cancelados
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                class="admin-list"
+                id="ordersList"
+            ></div>
+
+        </section>
+
+
+        <!-- ==================================================
+             PRODUTOS
+        =================================================== -->
+
+        <section
+            class="admin-section"
+            id="productsSection"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        CATALOG // MANAGEMENT
+                    </span>
+
+                    <h2>
+                        PRODUTOS
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="primary-admin-button"
+                    id="newProductButton"
+                >
+                    <i class="fa-solid fa-plus"></i>
+
+                    NOVO PRODUTO
+                </button>
+
+            </div>
+
+
+            <div
+                class="admin-list"
+                id="productsList"
+            ></div>
+
+        </section>
+
+
+        <!-- ==================================================
+             ESTOQUE
+        =================================================== -->
+
+        <section
+            class="admin-section"
+            id="stockSection"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        INVENTORY // CONTROL
+                    </span>
+
+                    <h2>
+                        ESTOQUE
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="stock-grid"
+                id="stockList"
+            ></div>
+
+        </section>
+
+
+        <!-- ==================================================
+             MENSAGENS
+        =================================================== -->
+
+        <section
+            class="admin-section"
+            id="messagesSection"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        CONTACT // INBOX
+                    </span>
+
+                    <h2>
+                        MENSAGENS
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="admin-list"
+                id="messagesList"
+            ></div>
+
+        </section>
+
+
+        <!-- ==================================================
+             CLIENTES
+        =================================================== -->
+
+        <section
+            class="admin-section"
+            id="clientsSection"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        CLIENT DATABASE
+                    </span>
+
+                    <h2>
+                        CLIENTES
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="clients-grid"
+                id="clientsList"
+            ></div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ======================================================
+     MODAL PRODUTO
+======================================================= -->
+
+<div
+    class="admin-modal"
+    id="productModal"
+>
+
+    <div
+        class="admin-modal-overlay"
+        id="productModalOverlay"
+    ></div>
+
+
+    <div class="admin-modal-content">
+
+        <button
+            type="button"
+            class="modal-close"
+            id="closeProductModal"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+
+        <span>
+            CATALOG // PRODUCT
+        </span>
+
+        <h2 id="productModalTitle">
+            NOVO PRODUTO
+        </h2>
+
+
+        <form id="productForm">
+
+            <input
+                type="hidden"
+                id="editingProductId"
+            >
+
+
+            <div class="form-grid">
+
+                <div class="admin-form-field">
+
+                    <label for="productName">
+                        NOME
+                    </label>
+
+                    <input
+                        type="text"
+                        id="productName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="admin-form-field">
+
+                    <label for="productFamily">
+                        FAMÍLIA
+                    </label>
+
+                    <select
+                        id="productFamily"
+                        required
+                    >
+                        <option value="Vanguard">
+                            Vanguard
+                        </option>
+
+                        <option value="HSTN">
+                            HSTN
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <div class="admin-form-field">
+
+                    <label for="productVariant">
+                        VARIANTE
+                    </label>
+
+                    <input
+                        type="text"
+                        id="productVariant"
+                        placeholder="Ex.: Prizm Black"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="admin-form-field">
+
+                    <label for="productStock">
+                        ESTOQUE
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productStock"
+                        min="0"
+                        value="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="admin-form-field full">
+
+                    <label for="productPrice">
+                        PREÇO
+                    </label>
+
+                    <input
+                        type="text"
+                        id="productPrice"
+                        placeholder="Ex.: Sob consulta"
+                    >
+
+                </div>
+
+
+                <div class="admin-form-field full">
+
+                    <label for="productDescription">
+                        DESCRIÇÃO
+                    </label>
+
+                    <textarea
+                        id="productDescription"
+                        placeholder="Descrição do produto..."
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="save-product-button"
+            >
+                <span>
+                    SALVAR PRODUTO
+                </span>
+
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+    class="admin-toast"
+    id="adminToast"
+>
+
+    <i class="fa-solid fa-check"></i>
+
+    <div>
+
+        <strong id="toastTitle">
+            CONCLUÍDO
+        </strong>
+
+        <span id="toastMessage">
+            Alteração salva.
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- FIREBASE -->
+
+<script
+    src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js">
+</script>
+
+<script
+    src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js">
+</script>
+
+<script
+    src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js">
+</script>
+
+<script
+    src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js">
+</script>
+
+<script src="js/firebase.js"></script>
+
+<script src="js/admin.js"></script>
+
+</body>
+</html>
