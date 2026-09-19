@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>META VISION | Smart Eyewear</title>
+
+    <meta
+        name="description"
+        content="Conheça uma nova geração de óculos inteligentes Oakley Meta."
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- LOADING -->
+    <div class="loader" id="loader">
+
+        <div class="loader-logo">
+            META<span>VISION</span>
+        </div>
+
+        <div class="loader-line">
+            <span></span>
+        </div>
+
+        <small>
+            INITIALIZING VISION SYSTEM
+        </small>
+
+    </div>
+
+
+    <!-- CURSOR -->
+    <div class="cursor-light" id="cursorLight"></div>
+
+
+    <!-- BACKGROUND -->
+    <div class="site-background">
+
+        <div class="grid-background"></div>
+
+        <div class="cyan-glow glow-1"></div>
+        <div class="cyan-glow glow-2"></div>
+
+        <div class="noise"></div>
+
+    </div>
+
+
+    <!-- HEADER -->
+    <header class="header" id="header">
+
+        <div class="header-container">
+
+            <a href="index.html" class="logo">
+
+                META<span>VISION</span>
+
+            </a>
+
+
+            <nav class="desktop-nav">
+
+                <a href="#inicio">
+                    INÍCIO
+                </a>
+
+                <a href="#tecnologia">
+                    TECNOLOGIA
+                </a>
+
+                <a href="#modelos">
+                    MODELOS
+                </a>
+
+                <a href="#experiencia">
+                    EXPERIÊNCIA
+                </a>
+
+                <a href="produtos.html">
+                    PRODUTOS
+                </a>
+
+            </nav>
+
+
+            <div class="header-actions">
+
+                <a
+                    href="carrinho.html"
+                    class="cart-button"
+                    aria-label="Carrinho"
+                >
+
+                    <i class="fa-solid fa-bag-shopping"></i>
+
+                    <span id="cartCount">
+                        0
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="produtos.html"
+                    class="shop-button"
+                >
+                    EXPLORAR
+                </a>
+
+
+                <button
+                    class="mobile-menu-button"
+                    id="mobileMenuButton"
+                    aria-label="Abrir menu"
+                >
+
+                    <span></span>
+                    <span></span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+
+        <button
+            id="mobileMenuClose"
+            class="mobile-menu-close"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+
+        <span class="mobile-menu-label">
+            NAVIGATION
+        </span>
+
+
+        <a href="#inicio">
+            01. INÍCIO
+        </a>
+
+        <a href="#tecnologia">
+            02. TECNOLOGIA
+        </a>
+
+        <a href="#modelos">
+            03. MODELOS
+        </a>
+
+        <a href="produtos.html">
+            04. PRODUTOS
+        </a>
+
+        <a href="carrinho.html">
+            05. CARRINHO
+        </a>
+
+    </div>
+
+
+    <main>
+
+
+        <!-- HERO -->
+        <section
+            class="hero"
+            id="inicio"
+        >
+
+            <div class="hero-tech tech-left">
+
+                <span>
+                    SYSTEM // 01
+                </span>
+
+                <div></div>
+
+            </div>
+
+
+            <div class="hero-tech tech-right">
+
+                <span>
+                    SMART EYEWEAR
+                </span>
+
+                <div></div>
+
+            </div>
+
+
+            <div class="hero-content">
+
+                <div class="hero-copy">
+
+                    <div class="hero-badge">
+
+                        <span class="pulse"></span>
+
+                        NEXT GENERATION
+                        SMART EYEWEAR
+
+                    </div>
+
+
+                    <h1>
+
+                        SEE
+
+                        <span>
+                            BEYOND.
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        TECNOLOGIA QUE
+
+                        <strong>
+                            VOCÊ VESTE.
+                        </strong>
+
+                    </p>
+
+
+                    <p class="hero-description">
+
+                        Descubra uma nova perspectiva com
+                        óculos inteligentes que combinam
+                        performance, câmera, áudio e inteligência
+                        conectada em um único dispositivo.
+
+                    </p>
+
+
+                    <div class="hero-buttons">
+
+                        <a
+                            href="produtos.html"
+                            class="primary-button"
+                        >
+
+                            <span>
+                                EXPLORAR MODELOS
+                            </span>
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+
+                        <a
+                            href="#tecnologia"
+                            class="secondary-button"
+                        >
+
+                            <i class="fa-solid fa-play"></i>
+
+                            CONHECER TECNOLOGIA
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUTO ANIMADO -->
+                <div
+                    class="hero-product"
+                    id="heroProduct"
+                >
+
+                    <div class="product-orbit orbit-one"></div>
+                    <div class="product-orbit orbit-two"></div>
+
+                    <div class="product-light"></div>
+
+
+                    <div class="product-status">
+
+                        <span></span>
+
+                        OAKLEY META
+
+                    </div>
+
+
+                    <img
+                        src="img/oakley-meta-vanguard.png"
+                        alt="Óculos inteligente Oakley Meta Vanguard"
+                        class="hero-glasses"
+                        id="heroGlasses"
+                    >
+
+
+                    <div class="product-shadow"></div>
+
+
+                    <div class="product-point point-camera">
+
+                        <span></span>
+
+                        <div class="point-line"></div>
+
+                        <small>
+                            SMART CAMERA
+                        </small>
+
+                    </div>
+
+
+                    <div class="product-point point-audio">
+
+                        <span></span>
+
+                        <div class="point-line"></div>
+
+                        <small>
+                            OPEN-EAR AUDIO
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="scroll-indicator">
+
+                <span>
+                    SCROLL TO DISCOVER
+                </span>
+
+                <div class="scroll-line"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SPECS -->
+        <section class="spec-strip">
+
+            <div class="spec">
+
+                <span>
+                    01
+                </span>
+
+                <div>
+
+                    <small>
+                        CAPTURE
+                    </small>
+
+                    <strong>
+                        12 MP
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="spec">
+
+                <span>
+                    02
+                </span>
+
+                <div>
+
+                    <small>
+                        VIDEO
+                    </small>
+
+                    <strong>
+                        ATÉ 3K
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="spec">
+
+                <span>
+                    03
+                </span>
+
+                <div>
+
+                    <small>
+                        AUDIO
+                    </small>
+
+                    <strong>
+                        OPEN-EAR
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="spec">
+
+                <span>
+                    04
+                </span>
+
+                <div>
+
+                    <small>
+                        INTELLIGENCE
+                    </small>
+
+                    <strong>
+                        META AI
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- TECNOLOGIA -->
+        <section
+            class="technology section"
+            id="tecnologia"
+        >
+
+            <div class="section-container">
+
+                <div class="section-heading reveal">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            // BUILT FOR THE FUTURE
+                        </span>
+
+                        <h2>
+                            MUITO ALÉM DE
+                            <span>ÓCULOS.</span>
+                        </h2>
+
+                    </div>
+
+
+                    <p>
+
+                        Uma experiência criada para manter
+                        tecnologia e mundo real no mesmo campo
+                        de visão.
+
+                    </p>
+
+                </div>
+
+
+                <div class="technology-grid">
+
+
+                    <article class="tech-card reveal">
+
+                        <span class="card-number">
+                            01
+                        </span>
+
+                        <div class="tech-icon">
+
+                            <i class="fa-solid fa-camera"></i>
+
+                        </div>
+
+                        <h3>
+                            CAPTURE SUA VISÃO
+                        </h3>
+
+                        <p>
+
+                            Registre momentos a partir da sua
+                            própria perspectiva sem precisar
+                            segurar o celular.
+
+                        </p>
+
+                        <div class="card-line"></div>
+
+                    </article>
+
+
+                    <article class="tech-card reveal">
+
+                        <span class="card-number">
+                            02
+                        </span>
+
+                        <div class="tech-icon">
+
+                            <i class="fa-solid fa-volume-high"></i>
+
+                        </div>
+
+                        <h3>
+                            ÁUDIO OPEN-EAR
+                        </h3>
+
+                        <p>
+
+                            Ouça músicas, chamadas e respostas
+                            sem isolar completamente você do
+                            ambiente ao redor.
+
+                        </p>
+
+                        <div class="card-line"></div>
+
+                    </article>
+
+
+                    <article class="tech-card reveal">
+
+                        <span class="card-number">
+                            03
+                        </span>
+
+                        <div class="tech-icon">
+
+                            <i class="fa-solid fa-brain"></i>
+
+                        </div>
+
+                        <h3>
+                            META AI
+                        </h3>
+
+                        <p>
+
+                            Recursos inteligentes integrados
+                            tornam a experiência mais natural
+                            e conectada.
+
+                        </p>
+
+                        <div class="card-line"></div>
+
+                    </article>
+
+
+                    <article class="tech-card reveal">
+
+                        <span class="card-number">
+                            04
+                        </span>
+
+                        <div class="tech-icon">
+
+                            <i class="fa-solid fa-person-running"></i>
+
+                        </div>
+
+                        <h3>
+                            PERFORMANCE
+                        </h3>
+
+                        <p>
+
+                            Design pensado para acompanhar
+                            movimento, esporte e rotina sem
+                            abandonar o estilo Oakley.
+
+                        </p>
+
+                        <div class="card-line"></div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- VISUAL EXPERIENCE -->
+        <section
+            class="experience"
+            id="experiencia"
+        >
+
+            <div class="experience-grid"></div>
+
+
+            <div class="experience-content reveal">
+
+                <span class="eyebrow">
+                    // HUMAN + MACHINE
+                </span>
+
+                <h2>
+
+                    SUA PERSPECTIVA.
+
+                    <span>
+                        AMPLIFICADA.
+                    </span>
+
+                </h2>
+
+
+                <p>
+
+                    Tecnologia foi feita para desaparecer
+                    quando você não precisa pensar nela.
+                    Vista. Capture. Escute. Continue em movimento.
+
+                </p>
+
+
+                <a
+                    href="produtos.html"
+                    class="text-link"
+                >
+
+                    DESCOBRIR A COLEÇÃO
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+
+            <div class="experience-rings">
+
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </div>
+
+        </section>
+
+
+        <!-- MODELOS -->
+        <section
+            class="models section"
+            id="modelos"
+        >
+
+            <div class="section-container">
+
+                <div class="section-heading reveal">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            // SELECT YOUR VISION
+                        </span>
+
+                        <h2>
+
+                            ESCOLHA SEU
+
+                            <span>
+                                META.
+                            </span>
+
+                        </h2>
+
+                    </div>
+
+
+                    <a
+                        href="produtos.html"
+                        class="text-link"
+                    >
+
+                        VER TODOS
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+
+                <div class="models-grid">
+
+
+                    <article class="model-card reveal">
+
+                        <div class="model-top">
+
+                            <span>
+                                PERFORMANCE
+                            </span>
+
+                            <small>
+                                01
+                            </small>
+
+                        </div>
+
+
+                        <div class="model-image model-placeholder">
+
+                            <span>
+                                OAKLEY META
+                            </span>
+
+                            <strong>
+                                VANGUARD
+                            </strong>
+
+                        </div>
+
+
+                        <div class="model-info">
+
+                            <div>
+
+                                <small>
+                                    OAKLEY META
+                                </small>
+
+                                <h3>
+                                    VANGUARD
+                                </h3>
+
+                            </div>
+
+
+                            <a href="produtos.html">
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="model-card reveal">
+
+                        <div class="model-top">
+
+                            <span>
+                                LIFESTYLE
+                            </span>
+
+                            <small>
+                                02
+                            </small>
+
+                        </div>
+
+
+                        <div class="model-image model-placeholder">
+
+                            <span>
+                                OAKLEY META
+                            </span>
+
+                            <strong>
+                                HSTN
+                            </strong>
+
+                        </div>
+
+
+                        <div class="model-info">
+
+                            <div>
+
+                                <small>
+                                    OAKLEY META
+                                </small>
+
+                                <h3>
+                                    HSTN
+                                </h3>
+
+                            </div>
+
+
+                            <a href="produtos.html">
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CTA -->
+        <section class="final-cta">
+
+            <div class="final-cta-glow"></div>
+
+            <div class="final-cta-content reveal">
+
+                <span class="eyebrow">
+                    // YOUR NEXT PERSPECTIVE
+                </span>
+
+                <h2>
+
+                    O FUTURO NÃO É PARA
+
+                    <span>
+                        SER OBSERVADO.
+                    </span>
+
+                    É PARA SER VESTIDO.
+
+                </h2>
+
+
+                <a
+                    href="produtos.html"
+                    class="primary-button"
+                >
+
+                    <span>
+                        ENCONTRAR MEU MODELO
+                    </span>
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <div class="footer-main">
+
+                <div>
+
+                    <a
+                        href="index.html"
+                        class="logo footer-logo"
+                    >
+
+                        META<span>VISION</span>
+
+                    </a>
+
+                    <p>
+                        Smart eyewear.
+                        Redefining perspective.
+                    </p>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <strong>
+                        NAVEGAÇÃO
+                    </strong>
+
+                    <a href="index.html">
+                        Início
+                    </a>
+
+                    <a href="produtos.html">
+                        Produtos
+                    </a>
+
+                    <a href="carrinho.html">
+                        Carrinho
+                    </a>
+
+                    <a href="contato.html">
+                        Contato
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <strong>
+                        MODELOS
+                    </strong>
+
+                    <a href="produtos.html">
+                        Vanguard
+                    </a>
+
+                    <a href="produtos.html">
+                        HSTN
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <strong>
+                        ADMIN
+                    </strong>
+
+                    <a href="admin-login.html">
+                        Área administrativa
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <span>
+                    © <span id="currentYear"></span>
+                    META VISION
+                </span>
+
+                <span>
+                    SMART EYEWEAR STORE
+                </span>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script src="js/script.js"></script>
+
+</body>
+</html>
