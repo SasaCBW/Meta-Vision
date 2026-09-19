@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin | META VISION</title>
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/admin-login.css"
+    >
+</head>
+
+<body>
+
+    <main class="admin-login-page">
+
+        <!-- BACKGROUND -->
+
+        <div class="admin-grid"></div>
+
+        <div class="admin-glow glow-left"></div>
+
+        <div class="admin-glow glow-right"></div>
+
+
+        <!-- TOPO -->
+
+        <header class="admin-top">
+
+            <a
+                href="index.html"
+                class="logo"
+            >
+                META<span>VISION</span>
+            </a>
+
+
+            <div class="security-status">
+
+                <span></span>
+
+                SECURE SYSTEM
+
+            </div>
+
+        </header>
+
+
+        <!-- LOGIN -->
+
+        <section class="login-layout">
+
+
+            <!-- LADO ESQUERDO -->
+
+            <div class="login-intro">
+
+                <span class="system-code">
+                    // ADMINISTRATIVE SYSTEM
+                </span>
+
+
+                <h1>
+
+                    CONTROL
+
+                    <strong>
+                        CENTER.
+                    </strong>
+
+                </h1>
+
+
+                <p>
+                    Área administrativa da META VISION.
+                    Acesso destinado somente à administração
+                    autorizada da loja.
+                </p>
+
+
+                <div class="system-lines">
+
+
+                    <div>
+
+                        <span>
+                            01
+                        </span>
+
+                        <strong>
+                            ORDERS
+                        </strong>
+
+                        <small>
+                            GERENCIAMENTO
+                        </small>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            02
+                        </span>
+
+                        <strong>
+                            PRODUCTS
+                        </strong>
+
+                        <small>
+                            CATÁLOGO
+                        </small>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            03
+                        </span>
+
+                        <strong>
+                            CLIENTS
+                        </strong>
+
+                        <small>
+                            CONTROLE
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="security-message">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <div>
+
+                        <strong>
+                            PROTECTED ACCESS
+                        </strong>
+
+                        <span>
+                            Sessões administrativas serão
+                            verificadas pelo sistema de autenticação.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOGIN BOX -->
+
+            <div class="login-terminal">
+
+                <div class="terminal-header">
+
+                    <div>
+
+                        <span class="terminal-dot"></span>
+
+                        <span class="terminal-dot"></span>
+
+                        <span class="terminal-dot"></span>
+
+                    </div>
+
+
+                    <span>
+                        ADMIN_AUTH.exe
+                    </span>
+
+                </div>
+
+
+                <div class="terminal-body">
+
+
+                    <div class="login-icon">
+
+                        <div class="login-icon-ring"></div>
+
+                        <i class="fa-solid fa-fingerprint"></i>
+
+                    </div>
+
+
+                    <div class="terminal-title">
+
+                        <span>
+                            IDENTITY VERIFICATION
+                        </span>
+
+                        <h2>
+                            ADMIN LOGIN
+                        </h2>
+
+                        <p>
+                            Insira suas credenciais administrativas.
+                        </p>
+
+                    </div>
+
+
+                    <!-- ALERTA -->
+
+                    <div
+                        class="login-alert"
+                        id="loginAlert"
+                    >
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <span id="loginAlertText">
+                            Não foi possível entrar.
+                        </span>
+
+                    </div>
+
+
+                    <!-- FORM -->
+
+                    <form id="adminLoginForm">
+
+
+                        <div class="admin-field">
+
+                            <label for="adminEmail">
+
+                                <i class="fa-regular fa-envelope"></i>
+
+                                E-MAIL
+
+                            </label>
+
+
+                            <div class="admin-input">
+
+                                <input
+                                    type="email"
+                                    id="adminEmail"
+                                    placeholder="admin@email.com"
+                                    autocomplete="email"
+                                    required
+                                >
+
+                                <span></span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="admin-field">
+
+                            <label for="adminPassword">
+
+                                <i class="fa-solid fa-lock"></i>
+
+                                SENHA
+
+                            </label>
+
+
+                            <div class="admin-input password-input">
+
+                                <input
+                                    type="password"
+                                    id="adminPassword"
+                                    placeholder="••••••••"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+
+                                <button
+                                    type="button"
+                                    id="togglePassword"
+                                    aria-label="Mostrar ou esconder senha"
+                                >
+
+                                    <i
+                                        class="fa-regular fa-eye"
+                                        id="passwordIcon"
+                                    ></i>
+
+                                </button>
+
+
+                                <span></span>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="admin-login-button"
+                            id="adminLoginButton"
+                        >
+
+                            <span id="loginButtonText">
+                                ACESSAR SISTEMA
+                            </span>
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </button>
+
+
+                    </form>
+
+
+                    <div class="terminal-security">
+
+                        <div>
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            AUTHENTICATION
+
+                        </div>
+
+
+                        <span>
+                            FIREBASE // SECURE
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RODAPÉ -->
+
+        <footer class="admin-footer">
+
+            <span>
+                META VISION // ADMIN SYSTEM
+            </span>
+
+
+            <a href="index.html">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                VOLTAR PARA A LOJA
+
+            </a>
+
+        </footer>
+
+    </main>
+
+
+    <!-- FIREBASE SDK -->
+
+    <script
+        src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js">
+    </script>
+
+    <script
+        src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js">
+    </script>
+
+
+    <!-- NOSSO FIREBASE -->
+
+    <script src="js/firebase.js"></script>
+
+
+    <!-- LOGIN -->
+
+    <script src="js/admin-login.js"></script>
+
+</body>
+</html>
